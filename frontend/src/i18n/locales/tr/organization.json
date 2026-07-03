@@ -1,0 +1,61 @@
+{
+  "organizationSetup": {
+    "title": "Kurum Kurulumu",
+    "description": "Çalışma alanınızı yönetmeye başlamak için önce kurumunuzu kurun.",
+    "name": "Kurum Adı",
+    "nameDescription": "Kurumunuzun resmi adı.",
+    "namePlaceholder": "Acme Corp",
+    "taxOffice": "Vergi Dairesi",
+    "taxOfficeDescription": "Kayıtlı olduğunuz vergi dairesinin adı.",
+    "taxOfficePlaceholder": "Büyük Mükellefler",
+    "taxNumber": "Vergi Numarası",
+    "taxNumberDescription": "Resmi 10 haneli vergi kimlik numaranız.",
+    "taxNumberPlaceholder": "1234567890",
+    "address": "Fatura Adresi",
+    "addressDescription": "Kurumun yasal fiziksel adresi.",
+    "addressPlaceholder": "Adres detayları...",
+    "submit": "Kurum Oluştur",
+    "success": "Kurum başarıyla oluşturuldu!",
+    "supportedLanguages": "Desteklenen Diller",
+    "supportedLanguagesDescription": "Menünüzün gösterileceği dilleri seçin.",
+    "defaultLanguage": "Varsayılan Dil",
+    "defaultLanguageDescription": "Menü ilk açıldığında gösterilecek varsayılan dil.",
+    "priceVariesByLanguage": "Fiyatlar Dile Göre Değişsin",
+    "priceVariesByLanguageDescription": "Aktif edilirse, her dil için farklı fiyat ve para birimi belirleyebilirsiniz. Kapalıysa tüm dillerde ortak para birimi kullanılır.",
+    "currencyLabel": "{{lang}} Para Birimi",
+    "currencyDescription": "{{lang}} dili için kullanılacak para birimini seçin.",
+    "singleCurrencyLabel": "Para Birimi",
+    "singleCurrencyDescription": "Menü fiyatlandırması için kullanılacak varsayılan para birimi.",
+    "validation": {
+      "required": "Bu alan zorunludur.",
+      "nameLength": "Kurum adı en az 3 karakter olmalıdır.",
+      "taxNumberLength": "Vergi numarası tam 10 haneli olmalıdır.",
+      "taxNumberDigits": "Vergi numarası sadece rakamlardan oluşmalıdır.",
+      "taxOfficeRequired": "Vergi dairesi zorunludur.",
+      "addressRequired": "Adres alanı zorunludur.",
+      "activeLangsRequired": "En az bir aktif dil seçilmelidir.",
+      "defaultLangMustBeActive": "Varsayılan dil, aktif diller arasından seçilmelidir."
+    }
+  },
+  "organizationDashboard": {
+    "title": "Vector Yönetim Paneli",
+    "welcomeTitle": "Vector Uygulamasına Hoş Geldiniz!",
+    "welcomeDescription": "Organizasyonunuzu yönetmek için sisteminiz hazır.",
+    "statusReady": "Sistem Hazır",
+    "actions": "Hızlı İşlemler",
+    "createMenu": "Yeni Menü Oluştur",
+    "manageTables": "Masaları Yönet",
+    "impresiveCardTitle": "Impresive Card",
+    "impresiveCardDescription": "Bu kartın arka planında dot grid ve soldan sağa hareket eden ışık efekti var."
+  },
+  "organizationSwitcher": {
+    "placeholder": "Kurum Seçin...",
+    "create": "Yeni Kurum Oluştur",
+    "switch": "Kurum Değiştir",
+    "noOrganization": "Kurum Yok",
+    "selectOrganizationTitle": "Kurum Seçin",
+    "selectOrganizationDescription": "Devam etmek istediğiniz kurumu seçiniz.",
+    "selectOrganizationRole": "Rol: {{role}}",
+    "selectOrganizationButton": "Seçilen Kuruma Giriş Yap"
+  }
+}

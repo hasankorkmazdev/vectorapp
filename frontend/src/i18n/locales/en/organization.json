@@ -1,0 +1,61 @@
+{
+  "organizationSetup": {
+    "title": "Organization Setup",
+    "description": "Please set up your organization details to start managing your workspace.",
+    "name": "Organization Name",
+    "nameDescription": "The official or registered name of your organization.",
+    "namePlaceholder": "Acme Corp",
+    "taxOffice": "Tax Office",
+    "taxOfficeDescription": "The name of the tax office where your organization is registered.",
+    "taxOfficePlaceholder": "Large Taxpayers",
+    "taxNumber": "Tax Number",
+    "taxNumberDescription": "Your official 10-digit tax identification number.",
+    "taxNumberPlaceholder": "1234567890",
+    "address": "Organization Address",
+    "addressDescription": "The legal physical address of the organization.",
+    "addressPlaceholder": "Address details...",
+    "submit": "Create Organization",
+    "success": "Organization created successfully!",
+    "supportedLanguages": "Supported Languages",
+    "supportedLanguagesDescription": "Select the languages in which your menu will be displayed.",
+    "defaultLanguage": "Default Language",
+    "defaultLanguageDescription": "The default language displayed when the menu first loads.",
+    "priceVariesByLanguage": "Prices Vary by Language",
+    "priceVariesByLanguageDescription": "If enabled, you can set different prices and currencies for each language. If disabled, a single common currency is used for all languages.",
+    "currencyLabel": "{{lang}} Currency",
+    "currencyDescription": "Select the currency to be used for {{lang}}.",
+    "singleCurrencyLabel": "Currency",
+    "singleCurrencyDescription": "The default currency to be used for menu pricing.",
+    "validation": {
+      "required": "This field is required.",
+      "nameLength": "Organization name must be at least 3 characters.",
+      "taxNumberLength": "Tax number must be exactly 10 digits.",
+      "taxNumberDigits": "Tax number must contain only digits.",
+      "taxOfficeRequired": "Tax office is required.",
+      "addressRequired": "Address is required.",
+      "activeLangsRequired": "At least one active language must be selected.",
+      "defaultLangMustBeActive": "Default language must be one of the active languages."
+    }
+  },
+  "organizationDashboard": {
+    "title": "Vector Management Dashboard",
+    "welcomeTitle": "Welcome to Vector!",
+    "welcomeDescription": "Your system is ready for managing your organization.",
+    "statusReady": "System Ready",
+    "actions": "Quick Actions",
+    "createMenu": "Create New Menu",
+    "manageTables": "Manage Tables",
+    "impresiveCardTitle": "Impresive Card",
+    "impresiveCardDescription": "This card has a dot grid background and a light effect moving from left to right."
+  },
+  "organizationSwitcher": {
+    "placeholder": "Select Organization...",
+    "create": "Create New Organization",
+    "switch": "Switch Organization",
+    "noOrganization": "No Organization",
+    "selectOrganizationTitle": "Select Organization",
+    "selectOrganizationDescription": "Please select an organization to continue.",
+    "selectOrganizationRole": "Role: {{role}}",
+    "selectOrganizationButton": "Enter Selected Organization"
+  }
+}

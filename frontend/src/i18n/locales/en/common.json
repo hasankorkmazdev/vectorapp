@@ -1,0 +1,57 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "success": "Success",
+    "error": "Error",
+    "logout": "Log out",
+    "create": "Create",
+    "confirm": "Confirm",
+    "rename": "Rename",
+    "next": "Next",
+    "back": "Back",
+    "logoAlt": "Logo",
+    "guest": "Guest",
+    "ellipsis": "...",
+    "checkmark": "✓",
+    "about": "About",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "noDescription": "-",
+    "actions": "Actions",
+    "empty": "Empty",
+    "breadcrumbHome": "Home",
+    "menuInitialFallback": "M",
+    "ariaBreadcrumb": "breadcrumb",
+    "ariaPagination": "pagination",
+    "ariaPrevPage": "Go to previous page",
+    "ariaNextPage": "Go to next page"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "menus": "Menus",
+    "tags": "Ingredients & Allergens",
+    "settings": "Settings",
+    "home": "Actions",
+    "appName": "Desti Menu",
+    "appSubtitle": "QR management panel",
+    "ariaToggle": "Toggle Sidebar",
+    "teams": "Teams",
+    "tasks": "Tasks"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "userMenu": {
+    "technicalSupport": "Technical Support",
+    "account": "Account",
+    "billing": "Billing",
+    "notifications": "Notifications"
+  }
+}

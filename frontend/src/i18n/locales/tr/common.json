@@ -1,0 +1,57 @@
+{
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "loading": "Yükleniyor...",
+    "success": "Başarılı",
+    "error": "Hata",
+    "logout": "Çıkış Yap",
+    "create": "Oluştur",
+    "confirm": "Onayla",
+    "rename": "Yeniden Adlandır",
+    "next": "İleri",
+    "back": "Geri",
+    "logoAlt": "Logo",
+    "guest": "Misafir",
+    "ellipsis": "...",
+    "checkmark": "✓",
+    "about": "Hakkında",
+    "terms": "Koşullar",
+    "privacy": "Gizlilik",
+    "noDescription": "-",
+    "actions": "İşlemler",
+    "empty": "Boş",
+    "breadcrumbHome": "Ana Sayfa",
+    "menuInitialFallback": "M",
+    "ariaBreadcrumb": "içerik haritası",
+    "ariaPagination": "sayfalama",
+    "ariaPrevPage": "Önceki sayfaya git",
+    "ariaNextPage": "Sonraki sayfaya git"
+  },
+  "sidebar": {
+    "dashboard": "Yönetim Paneli",
+    "menus": "Menüler",
+    "tags": "İçindekiler & Alerjenler",
+    "settings": "Ayarlar",
+    "home": "İşlemler",
+    "appName": "Desti Menu",
+    "appSubtitle": "QR yönetim paneli",
+    "ariaToggle": "Kenar Çubuğunu Aç/Kapat",
+    "teams": "Ekipler",
+    "tasks": "Görevler"
+  },
+  "theme": {
+    "toggle": "Temayı değiştir",
+    "light": "Açık",
+    "dark": "Koyu",
+    "system": "Sistem"
+  },
+  "userMenu": {
+    "technicalSupport": "Teknik Destek",
+    "account": "Hesap",
+    "billing": "Faturalandırma",
+    "notifications": "Bildirimler"
+  }
+}
