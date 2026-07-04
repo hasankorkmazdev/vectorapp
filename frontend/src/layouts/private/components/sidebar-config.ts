@@ -1,7 +1,13 @@
 import {
   LayoutDashboard,
   Users,
-  Settings,
+  CalendarCheck,
+  Megaphone,
+  Truck,
+  Package,
+  Monitor,
+  FileDown,
+  FileUp,
 } from "lucide-react";
 
 export interface NavItem {
@@ -15,26 +21,86 @@ export interface NavItem {
   }[];
 }
 
+export interface NavGroup {
+  groupLabel: string;
+  items: NavItem[];
+}
+
 export interface NavigationConfig {
-  main: NavItem[];
+  groups: NavGroup[];
 }
 
 export const getNavigation = (t: any): NavigationConfig => ({
-  main: [
+  groups: [
     {
-      title: t("sidebar.dashboard"),
-      url: "/",
-      icon: LayoutDashboard,
+      groupLabel: "",
+      items: [
+        {
+          title: t("sidebar.dashboard"),
+          url: "/",
+          icon: LayoutDashboard,
+        },
+      ],
     },
     {
-      title: t("sidebar.teams"),
-      url: "/teams",
-      icon: Users,
+      groupLabel: t("sidebar.customers"),
+      items: [
+        {
+          title: t("sidebar.customersList"),
+          url: "/customers",
+          icon: Users,
+        },
+        {
+          title: t("sidebar.visits"),
+          url: "/visits",
+          icon: CalendarCheck,
+        },
+        {
+          title: t("sidebar.marketing"),
+          url: "/marketing",
+          icon: Megaphone,
+        },
+      ],
     },
     {
-      title: t("sidebar.settings"),
-      url: "/settings",
-      icon: Settings,
+      groupLabel: t("sidebar.suppliers"),
+      items: [
+        {
+          title: t("sidebar.suppliersList"),
+          url: "/suppliers",
+          icon: Truck,
+        },
+      ],
+    },
+    {
+      groupLabel: t("sidebar.stock"),
+      items: [
+        {
+          title: t("sidebar.stockItems"),
+          url: "/stock",
+          icon: Package,
+        },
+      ],
+    },
+    {
+      groupLabel: t("sidebar.accounting"),
+      items: [
+        {
+          title: t("sidebar.monitor"),
+          url: "/accounting/monitor",
+          icon: Monitor,
+        },
+        {
+          title: t("sidebar.incomingInvoices"),
+          url: "/accounting/invoices/incoming",
+          icon: FileDown,
+        },
+        {
+          title: t("sidebar.outgoingInvoices"),
+          url: "/accounting/invoices/outgoing",
+          icon: FileUp,
+        },
+      ],
     },
   ],
 });

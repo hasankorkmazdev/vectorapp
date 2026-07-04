@@ -8,7 +8,6 @@ namespace Vector.Api.Data
         public static readonly Guid OwnerRoleId = Guid.Parse("00000000-0000-0000-0000-000000000010");
         public static readonly Guid AdminRoleId = Guid.Parse("00000000-0000-0000-0000-000000000011");
         public static readonly Guid MemberRoleId = Guid.Parse("00000000-0000-0000-0000-000000000012");
-        public static readonly Guid ViewerRoleId = Guid.Parse("00000000-0000-0000-0000-000000000013");
 
         // User IDs
         public static readonly Guid AdminUserId = Guid.Parse("00000000-0000-0000-0000-000000000020");

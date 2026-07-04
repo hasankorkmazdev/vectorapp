@@ -95,7 +95,7 @@ namespace Vector.Api.Middlewares
             }
 
             // 7. Verify permission scopes
-            var hasPermission = authCache.Permissions.Contains("vector.all") || 
+            var hasPermission = authCache.Permissions.Contains("super.admin") || 
                                 scopeAttr.Scopes.Any(requiredScope => authCache.Permissions.Contains(requiredScope));
 
             if (!hasPermission)

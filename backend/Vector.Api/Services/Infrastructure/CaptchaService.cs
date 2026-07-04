@@ -17,6 +17,11 @@ namespace Vector.Api.Services.Infrastructure
 
         public async Task<bool> VerifyAsync(string token)
         {
+            var enabled = _configuration.GetValue<bool>("Recaptcha:Enabled");
+
+            if (!enabled)
+                return true;
+
             if (token == "development_bypass")
                 return true;
 

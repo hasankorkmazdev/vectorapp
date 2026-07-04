@@ -17,7 +17,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { LayoutGrid } from "lucide-react";
+import { LayoutGrid, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation();
@@ -49,8 +50,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent className="px-2 py-3">
-        <NavMain items={navigation.main} groupLabel={t("sidebar.home")} />
+        {navigation.groups.map((group) => (
+          <NavMain
+            key={group.groupLabel || "other"}
+            items={group.items}
+            groupLabel={group.groupLabel || undefined}
+          />
+        ))}
       </SidebarContent>
+
+      <div className="border-t px-2 py-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm">
+              <Link to="/settings">
+                <Settings className="size-4" />
+                <span>{t("sidebar.settings")}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </div>
 
       <SidebarFooter className="border-t p-2">
         <NavUser user={userData} />

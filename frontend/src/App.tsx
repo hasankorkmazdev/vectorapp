@@ -2,14 +2,22 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { PrivateLayout, DashboardLayout, SetupLayout } from "./layouts/private";
 import { PublicLayout } from "./layouts/public/Index";
-import LoginPage from "./pages/login/Index";
-import RegisterPage from "./pages/register/Index";
-import { VerifyEmailPage } from "./pages/verify-email/Index";
-import ForgotPasswordPage from "./pages/forgot-password/Index";
-import ResetPasswordPage from "./pages/reset-password/Index";
-import { Dashboard } from "./pages/Dashboard";
-import { OrganizationSetupPage } from "./pages/organization-setup/Index";
-import { SettingsPage } from "./pages/settings/Settings";
+import LoginPage from "./features/auth/pages/login/Index";
+import RegisterPage from "./features/auth/pages/register/Index";
+import { VerifyEmailPage } from "./features/auth/pages/verify-email/Index";
+import ForgotPasswordPage from "./features/auth/pages/forgot-password/Index";
+import ResetPasswordPage from "./features/auth/pages/reset-password/Index";
+import { Dashboard } from "./features/dashboard/pages/Dashboard";
+import { CustomersPage } from "./features/customers/pages/CustomersPage";
+import { VisitsPage } from "./features/visits/pages/VisitsPage";
+import { MarketingPage } from "./features/marketing/pages/MarketingPage";
+import { SuppliersPage } from "./features/suppliers/pages/SuppliersPage";
+import { StockPage } from "./features/stock/pages/StockPage";
+import { MonitorPage } from "./features/accounting/pages/MonitorPage";
+import { IncomingInvoicesPage } from "./features/accounting/pages/IncomingInvoicesPage";
+import { OutgoingInvoicesPage } from "./features/accounting/pages/OutgoingInvoicesPage";
+import { OrganizationSetupPage } from "./features/organization/pages/organization-setup/Index";
+import { SettingsPage } from "./features/settings/pages/Settings";
 import { Toaster } from "sonner";
 
 function App() {
@@ -30,6 +38,14 @@ function App() {
           <Route element={<PrivateLayout />}>
             <Route element={<DashboardLayout />}>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/customers" element={<CustomersPage />} />
+              <Route path="/visits" element={<VisitsPage />} />
+              <Route path="/marketing" element={<MarketingPage />} />
+              <Route path="/suppliers" element={<SuppliersPage />} />
+              <Route path="/stock" element={<StockPage />} />
+              <Route path="/accounting/monitor" element={<MonitorPage />} />
+              <Route path="/accounting/invoices/incoming" element={<IncomingInvoicesPage />} />
+              <Route path="/accounting/invoices/outgoing" element={<OutgoingInvoicesPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>
             <Route element={<SetupLayout />}>

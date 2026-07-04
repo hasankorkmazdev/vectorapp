@@ -88,7 +88,6 @@ namespace Vector.Api.Services.Organization
             organization.SupportedLanguages = request.SupportedLanguages.Select(l => l.ToLower().Trim()).ToList();
             organization.DefaultLanguage = request.DefaultLanguage.ToLower().Trim();
             organization.PriceVariesByLanguage = request.PriceVariesByLanguage;
-            organization.LanguageCurrencies = request.LanguageCurrencies;
             organization.IsSetupRequired = false;
 
             await _context.SaveChangesAsync();
@@ -139,7 +138,6 @@ namespace Vector.Api.Services.Organization
                 SupportedLanguages = organization.SupportedLanguages,
                 DefaultLanguage = organization.DefaultLanguage,
                 PriceVariesByLanguage = organization.PriceVariesByLanguage,
-                LanguageCurrencies = organization.LanguageCurrencies,
                 Members = organization.Members.Select(m => new OrganizationMemberDto
                 {
                     Id = m.User?.Id ?? Guid.Empty,
@@ -168,7 +166,6 @@ namespace Vector.Api.Services.Organization
                 SupportedLanguages = organization.SupportedLanguages,
                 DefaultLanguage = organization.DefaultLanguage,
                 PriceVariesByLanguage = organization.PriceVariesByLanguage,
-                LanguageCurrencies = organization.LanguageCurrencies
             }, null);
         }
 
@@ -191,15 +188,6 @@ namespace Vector.Api.Services.Organization
             organization.SupportedLanguages = request.SupportedLanguages.Select(l => l.ToLower().Trim()).ToList();
             organization.DefaultLanguage = request.DefaultLanguage.ToLower().Trim();
             organization.PriceVariesByLanguage = request.PriceVariesByLanguage;
-
-            var cleanCurrencies = new Dictionary<string, string>();
-            foreach (var lang in organization.SupportedLanguages)
-            {
-                cleanCurrencies[lang] = request.LanguageCurrencies.TryGetValue(lang, out var currency)
-                    ? currency.Trim().ToUpper()
-                    : (lang == "tr" ? "TRY" : "USD");
-            }
-            organization.LanguageCurrencies = cleanCurrencies;
 
             await _context.SaveChangesAsync();
             return (true, null);

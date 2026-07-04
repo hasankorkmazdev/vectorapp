@@ -7,6 +7,5 @@ namespace Vector.Api.Models.Organization
         public List<string> SupportedLanguages { get; set; } = new();
         public string DefaultLanguage { get; set; } = "tr";
         public bool PriceVariesByLanguage { get; set; } = false;
-        public Dictionary<string, string> LanguageCurrencies { get; set; } = new();
     }
 }

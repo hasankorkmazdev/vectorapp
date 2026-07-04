@@ -15,6 +15,7 @@ namespace Vector.Api.Data
             SeedUsers(context);
             SeedOrganizations(context);
             SeedOrganizationMembers(context);
+            SeedCustomers(context);
         }
 
         private static void SeedPermissions(ApplicationDbContext context)
@@ -37,7 +38,6 @@ namespace Vector.Api.Data
                 new() { Id = SeedConstants.OwnerRoleId, Name = "Owner" },
                 new() { Id = SeedConstants.AdminRoleId, Name = "Admin" },
                 new() { Id = SeedConstants.MemberRoleId, Name = "Member" },
-                new() { Id = SeedConstants.ViewerRoleId, Name = "Viewer" }
             };
 
             context.AddOrUpdate(roles);
@@ -108,27 +108,14 @@ namespace Vector.Api.Data
                 new()
                 {
                     Id = SeedConstants.OrganizationKBB,
-                    Name = "Konya Büyükşehir Belediyesi",
+                    Name = "KMZ Makine Sistem",
                     TaxNumber = "1234567890",
-                    TaxOffice = "Konya Vergi Dairesi",
-                    Address = "Konya Büyükşehir Belediyesi Yerleşkesi, No:12, Konya",
+                    TaxOffice = "Alaaddin Vergi Dairesi",
+                    Address = " Fevziçakmak, SILA CAD KOBİSAN 3 SAN. SİT, 42050 Karatay/Konya",
                     SupportedLanguages = new() { "tr", "en" },
                     DefaultLanguage = "tr",
-                    LanguageCurrencies = new() { { "tr", "TRY" }, { "en", "TRY" } },
                     CreatedAt = DateTime.UtcNow
                 },
-                new()
-                {
-                    Id = SeedConstants.Organization2Id,
-                    Name = "Selçuk Belediyesi",
-                    TaxNumber = "0987654321",
-                    TaxOffice = "Konya Vergi Dairesi",
-                    Address = "Selçuk Belediyesi Yerleşkesi, No:12, Konya",
-                    SupportedLanguages = new() { "tr" },
-                    DefaultLanguage = "tr",
-                    LanguageCurrencies = new() { { "tr", "TRY" } },
-                    CreatedAt = DateTime.UtcNow
-                }
             };
 
             context.AddOrUpdate(organizations);
@@ -149,14 +136,6 @@ namespace Vector.Api.Data
                 },
                 new()
                 {
-                    Id = Guid.Parse("FD8E23AA-594B-4B86-A009-014EC84C4F58"),
-                    OrganizationId = SeedConstants.Organization2Id,
-                    UserId = SeedConstants.OrganizationAdminUserId,
-                    RoleId = SeedConstants.AdminRoleId,
-                    CreatedAt = DateTime.UtcNow
-                },
-                new()
-                {
                     Id = Guid.Parse("84BF7E9B-A85E-475A-9E0F-1DBE008CEF5D"),
                     OrganizationId = SeedConstants.OrganizationKBB,
                     UserId = SeedConstants.hasankorkmazdevId,
@@ -166,6 +145,67 @@ namespace Vector.Api.Data
             };
 
             context.AddOrUpdate(memberships);
+            context.SaveChanges();
+        }
+
+        private static void SeedCustomers(ApplicationDbContext context)
+        {
+            var customerId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+
+            var customers = new CustomerEntity[]
+            {
+                new()
+                {
+                    Id = customerId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "C0001",
+                    CompanyName = "Sonne Piston",
+                    TaxNumber = "7890123456",
+                    TaxOffice = "Büyükmükellefler",
+                    Phone = new() { "(0332) 345 33 33" },
+                    Email = new(),
+                    CreatedById = SeedConstants.OrganizationAdminUserId,
+                    CreatedAt = DateTime.UtcNow,
+                }
+            };
+
+            context.AddOrUpdate(customers);
+            context.SaveChanges();
+
+            var addresses = new CustomerAddressEntity[]
+            {
+                new()
+                {
+                    Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                    CustomerId = customerId,
+                    Label = "Merkez",
+                    Country = "Türkiye",
+                    City = "Konya",
+                    District = "Selçuklu",
+                    PostalCode = "42050",
+                    Address = "K.O.S.B, Büyükkayacık OSB, 18 Nolu Sokak No:3",
+                    IsPrimary = true,
+                    CreatedAt = DateTime.UtcNow,
+                }
+            };
+
+            context.AddOrUpdate(addresses);
+            context.SaveChanges();
+
+            var contacts = new CustomerContactEntity[]
+            {
+                new()
+                {
+                    Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                    CustomerId = customerId,
+                    FullName = "Hıfzı Korkmaz",
+                    Phone = "(0332) 345 33 33",
+                    IsPrimary = true,
+                    CreatedAt = DateTime.UtcNow,
+                }
+            };
+
+            context.AddOrUpdate(contacts);
             context.SaveChanges();
         }
     }

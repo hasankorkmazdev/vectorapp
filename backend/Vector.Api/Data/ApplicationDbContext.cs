@@ -28,6 +28,9 @@ namespace Vector.Api.Data
         public DbSet<OrganizationEntity> Organizations => Set<OrganizationEntity>();
         public DbSet<OrganizationMemberEntity> OrganizationMembers => Set<OrganizationMemberEntity>();
         public DbSet<RefreshTokenEntity> RefreshTokens => Set<RefreshTokenEntity>();
+        public DbSet<CustomerEntity> Customers => Set<CustomerEntity>();
+        public DbSet<CustomerContactEntity> CustomerContacts => Set<CustomerContactEntity>();
+        public DbSet<CustomerAddressEntity> CustomerAddresses => Set<CustomerAddressEntity>();
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,15 +45,10 @@ namespace Vector.Api.Data
             modelBuilder.Entity<RolePermissionEntity>().ToTable("RolePermissions");
             modelBuilder.Entity<OrganizationEntity>().ToTable("Organizations");
             modelBuilder.Entity<RefreshTokenEntity>().ToTable("RefreshTokens");
-            modelBuilder.Entity<OrganizationEntity>()
-                .Property(o => o.LanguageCurrencies)
-                .HasConversion(
-                    v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions)null!),
-                    v => string.IsNullOrEmpty(v)
-                        ? new Dictionary<string, string>()
-                        : System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(v, (System.Text.Json.JsonSerializerOptions)null!) ?? new Dictionary<string, string>()
-                );
             modelBuilder.Entity<OrganizationMemberEntity>().ToTable("OrganizationMembers");
+            modelBuilder.Entity<CustomerEntity>().ToTable("Customers");
+            modelBuilder.Entity<CustomerContactEntity>().ToTable("CustomerContacts");
+            modelBuilder.Entity<CustomerAddressEntity>().ToTable("CustomerAddresses");
 
             // Composite keys
             modelBuilder.Entity<RolePermissionEntity>()
@@ -60,6 +58,9 @@ namespace Vector.Api.Data
             modelBuilder.Entity<UserEntity>().HasQueryFilter(u => u.DeletedAt == null);
             modelBuilder.Entity<OrganizationEntity>().HasQueryFilter(o => o.DeletedAt == null);
             modelBuilder.Entity<OrganizationMemberEntity>().HasQueryFilter(om => om.DeletedAt == null);
+            modelBuilder.Entity<CustomerEntity>().HasQueryFilter(c => c.DeletedAt == null);
+            modelBuilder.Entity<CustomerContactEntity>().HasQueryFilter(co => co.DeletedAt == null);
+            modelBuilder.Entity<CustomerAddressEntity>().HasQueryFilter(a => a.DeletedAt == null);
 
             // Relations
             modelBuilder.Entity<OrganizationMemberEntity>()
@@ -90,7 +91,24 @@ namespace Vector.Api.Data
                 .HasForeignKey(om => om.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<CustomerEntity>()
+                .HasIndex(c => c.OrganizationId);
 
+            modelBuilder.Entity<CustomerEntity>()
+                .HasIndex(c => new { c.OrganizationId, c.Code })
+                .IsUnique();
+
+            modelBuilder.Entity<CustomerContactEntity>()
+                .HasOne(co => co.Customer)
+                .WithMany(c => c.Contacts)
+                .HasForeignKey(co => co.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CustomerAddressEntity>()
+                .HasOne(a => a.Customer)
+                .WithMany(c => c.Addresses)
+                .HasForeignKey(a => a.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // AutoIncludes for User roles & permissions
             modelBuilder.Entity<RoleEntity>()

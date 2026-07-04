@@ -14,7 +14,6 @@ namespace Vector.Api.Entities
         public List<string> SupportedLanguages { get; set; } = new() { "tr" };
         public string DefaultLanguage { get; set; } = "tr";
         public bool PriceVariesByLanguage { get; set; } = false;
-        public Dictionary<string, string> LanguageCurrencies { get; set; } = new() { { "tr", "TRY" } };
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }

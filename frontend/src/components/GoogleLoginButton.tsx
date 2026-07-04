@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { authService } from "@/services/auth-service";
+import { authService } from "@/features/auth/services/auth-service";
 import { useAppStore } from "@/store/app-store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";

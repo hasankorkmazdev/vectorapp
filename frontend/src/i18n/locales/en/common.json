@@ -14,6 +14,7 @@
     "next": "Next",
     "back": "Back",
     "logoAlt": "Logo",
+    "appName": "VECTANOM",
     "guest": "Guest",
     "ellipsis": "...",
     "checkmark": "✓",
@@ -36,8 +37,8 @@
     "tags": "Ingredients & Allergens",
     "settings": "Settings",
     "home": "Actions",
-    "appName": "Desti Menu",
-    "appSubtitle": "QR management panel",
+    "appName": "Vector APP",
+    "appSubtitle": "Vector App",
     "ariaToggle": "Toggle Sidebar",
     "teams": "Teams",
     "tasks": "Tasks"
