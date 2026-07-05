@@ -6,6 +6,8 @@ import {
   Truck,
   Package,
   Monitor,
+  TrendingUp,
+  TrendingDown,
   FileDown,
   FileUp,
 } from "lucide-react";
@@ -89,6 +91,16 @@ export const getNavigation = (t: any): NavigationConfig => ({
           title: t("sidebar.monitor"),
           url: "/accounting/monitor",
           icon: Monitor,
+        },
+        {
+          title: t("sidebar.income"),
+          url: "/accounting/income",
+          icon: TrendingUp,
+        },
+        {
+          title: t("sidebar.expense"),
+          url: "/accounting/expense",
+          icon: TrendingDown,
         },
         {
           title: t("sidebar.incomingInvoices"),

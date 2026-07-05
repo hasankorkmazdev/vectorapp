@@ -16,6 +16,8 @@ import { ProductsPage } from "./features/products/pages/ProductsPage";
 import { ProductDetailPage } from "./features/products/pages/ProductDetailPage";
 import { EditProductPage } from "./features/products/pages/EditProductPage";
 import { MonitorPage } from "./features/accounting/pages/MonitorPage";
+import { IncomePage } from "./features/accounting/pages/IncomePage";
+import { ExpensePage } from "./features/accounting/pages/ExpensePage";
 import { IncomingInvoicesPage } from "./features/accounting/pages/IncomingInvoicesPage";
 import { OutgoingInvoicesPage } from "./features/accounting/pages/OutgoingInvoicesPage";
 import { OrganizationSetupPage } from "./features/organization/pages/organization-setup/Index";
@@ -48,6 +50,8 @@ function App() {
               <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/products/:id/edit" element={<EditProductPage />} />
               <Route path="/accounting/monitor" element={<MonitorPage />} />
+              <Route path="/accounting/income" element={<IncomePage />} />
+              <Route path="/accounting/expense" element={<ExpensePage />} />
               <Route path="/accounting/invoices/incoming" element={<IncomingInvoicesPage />} />
               <Route path="/accounting/invoices/outgoing" element={<OutgoingInvoicesPage />} />
               <Route path="/settings" element={<SettingsPage />} />
