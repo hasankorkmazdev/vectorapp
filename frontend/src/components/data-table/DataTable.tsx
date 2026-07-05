@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import type { DataTableProps } from "./types";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTablePagination } from "./DataTablePagination";
+import { cn } from "@/lib/utils";
 
 export function DataTable<T extends { id: string }>({
   columns,
@@ -30,6 +31,7 @@ export function DataTable<T extends { id: string }>({
   );
   const prevFilterStr = useRef(JSON.stringify(filters));
   const prevEntriesStr = useRef("[]");
+  const debounceTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     const str = JSON.stringify(filters);
@@ -46,7 +48,8 @@ export function DataTable<T extends { id: string }>({
     const str = JSON.stringify(entries);
     if (str !== prevEntriesStr.current) {
       prevEntriesStr.current = str;
-      onFilter(entries);
+      clearTimeout(debounceTimer.current);
+      debounceTimer.current = setTimeout(() => onFilter(entries), 300);
     }
   }, [localFilters]);
 
@@ -86,7 +89,7 @@ export function DataTable<T extends { id: string }>({
               data.map((item) => (
                 <TableRow key={item.id}>
                   {columns.map((col) => (
-                    <TableCell key={col.key} className={col.className}>
+                    <TableCell key={col.key} className={cn("px-5 pt-3 pb-3 ",col.className)}>
                       {col.render(item)}
                     </TableCell>
                   ))}

@@ -31,7 +31,8 @@ namespace Vector.Api.Data
         public DbSet<CustomerEntity> Customers => Set<CustomerEntity>();
         public DbSet<CustomerContactEntity> CustomerContacts => Set<CustomerContactEntity>();
         public DbSet<CustomerAddressEntity> CustomerAddresses => Set<CustomerAddressEntity>();
-
+        public DbSet<ProductEntity> Products => Set<ProductEntity>();
+        public DbSet<BomItemEntity> BomItems => Set<BomItemEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,6 +50,8 @@ namespace Vector.Api.Data
             modelBuilder.Entity<CustomerEntity>().ToTable("Customers");
             modelBuilder.Entity<CustomerContactEntity>().ToTable("CustomerContacts");
             modelBuilder.Entity<CustomerAddressEntity>().ToTable("CustomerAddresses");
+            modelBuilder.Entity<ProductEntity>().ToTable("Products");
+            modelBuilder.Entity<BomItemEntity>().ToTable("BomItems");
 
             // Composite keys
             modelBuilder.Entity<RolePermissionEntity>()
@@ -61,6 +64,8 @@ namespace Vector.Api.Data
             modelBuilder.Entity<CustomerEntity>().HasQueryFilter(c => c.DeletedAt == null);
             modelBuilder.Entity<CustomerContactEntity>().HasQueryFilter(co => co.DeletedAt == null);
             modelBuilder.Entity<CustomerAddressEntity>().HasQueryFilter(a => a.DeletedAt == null);
+            modelBuilder.Entity<ProductEntity>().HasQueryFilter(p => p.DeletedAt == null);
+            modelBuilder.Entity<BomItemEntity>().HasQueryFilter(b => b.DeletedAt == null);
 
             // Relations
             modelBuilder.Entity<OrganizationMemberEntity>()
@@ -109,6 +114,30 @@ namespace Vector.Api.Data
                 .WithMany(c => c.Addresses)
                 .HasForeignKey(a => a.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Product indexes
+            modelBuilder.Entity<ProductEntity>()
+                .HasIndex(p => p.OrganizationId);
+
+            modelBuilder.Entity<ProductEntity>()
+                .HasIndex(p => new { p.OrganizationId, p.Code })
+                .IsUnique();
+
+            // BomItem relationships
+            modelBuilder.Entity<BomItemEntity>()
+                .HasOne(b => b.ParentProduct)
+                .WithMany(p => p.ParentBomItems)
+                .HasForeignKey(b => b.ParentProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<BomItemEntity>()
+                .HasOne(b => b.ComponentProduct)
+                .WithMany(p => p.ComponentBomItems)
+                .HasForeignKey(b => b.ComponentProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<BomItemEntity>()
+                .HasIndex(b => b.OrganizationId);
 
             // AutoIncludes for User roles & permissions
             modelBuilder.Entity<RoleEntity>()

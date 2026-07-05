@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 export interface Column<T> {
   key: string;
   label: string;
+  placeholder?: string;
+  icon: ReactNode;
   render: (item: T) => ReactNode;
   sortable?: boolean;
   filterable?: boolean;

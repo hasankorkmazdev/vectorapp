@@ -150,13 +150,14 @@ namespace Vector.Api.Data
 
         private static void SeedCustomers(ApplicationDbContext context)
         {
-            var customerId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var customer1Id = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var customer2Id = Guid.Parse("7779e5f8-8d14-4b6e-918a-6dca8d3980fe");
 
             var customers = new CustomerEntity[]
             {
                 new()
                 {
-                    Id = customerId,
+                    Id = customer1Id,
                     OrganizationId = SeedConstants.OrganizationKBB,
                     Code = "C0001",
                     CompanyName = "Sonne Piston",
@@ -164,6 +165,19 @@ namespace Vector.Api.Data
                     TaxOffice = "Büyükmükellefler",
                     Phone = new() { "(0332) 345 33 33" },
                     Email = new(),
+                    CreatedById = SeedConstants.OrganizationAdminUserId,
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new()
+                {
+                    Id = customer2Id,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "C0003",
+                    CompanyName = "Akkor Kalıp",
+                    TaxNumber = "12412412414",
+                    TaxOffice = "Aladdin V.D",
+                    Phone = new() { "05075751463", "5354080032" },
+                    Email = new() { "info@akkorkalip.com" },
                     CreatedById = SeedConstants.OrganizationAdminUserId,
                     CreatedAt = DateTime.UtcNow,
                 }
@@ -177,13 +191,26 @@ namespace Vector.Api.Data
                 new()
                 {
                     Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
-                    CustomerId = customerId,
+                    CustomerId = customer1Id,
                     Label = "Merkez",
                     Country = "Türkiye",
                     City = "Konya",
                     District = "Selçuklu",
                     PostalCode = "42050",
                     Address = "K.O.S.B, Büyükkayacık OSB, 18 Nolu Sokak No:3",
+                    IsPrimary = true,
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new()
+                {
+                    Id = Guid.Parse("c4a8ead6-255b-4e31-b297-0648cf79d26d"),
+                    CustomerId = customer2Id,
+                    Label = "Fabrika Adres",
+                    Country = "Türkiye",
+                    City = "Konya",
+                    District = "Selçuklu",
+                    PostalCode = "42050",
+                    Address = "Fevziçakmak, SILA CAD KOBİSAN 3 SAN. SİT, Karatay/Konya",
                     IsPrimary = true,
                     CreatedAt = DateTime.UtcNow,
                 }
@@ -197,9 +224,20 @@ namespace Vector.Api.Data
                 new()
                 {
                     Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
-                    CustomerId = customerId,
+                    CustomerId = customer1Id,
                     FullName = "Hıfzı Korkmaz",
                     Phone = "(0332) 345 33 33",
+                    IsPrimary = true,
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new()
+                {
+                    Id = Guid.Parse("599e9835-72b8-4f9f-bb82-320b240be9cc"),
+                    CustomerId = customer2Id,
+                    FullName = "Omer Osman Korkmaz",
+                    Title = "Şirket Sahibi",
+                    Email = "omerosmankorkmaz@akkorkalip.com",
+                    Phone = "05075751463",
                     IsPrimary = true,
                     CreatedAt = DateTime.UtcNow,
                 }

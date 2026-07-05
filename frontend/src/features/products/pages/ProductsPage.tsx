@@ -1,18 +1,19 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "@/hooks/use-document-title";
-import { customerService, type Customer } from "@/features/customers/services/customer-service";
-import { CreateCustomerDialog } from "@/features/customers/components/CreateCustomerDialog";
+import { productService, type ProductListItem } from "@/features/products/services/product-service";
+import { CreateProductDialog } from "@/features/products/components/CreateProductDialog";
 import { DataTable } from "@/components/data-table/DataTable";
 import type { Column, SortState } from "@/components/data-table/types";
 import { Button } from "@/components/ui/button";
-import { Plus, Phone, Mail, Hash, Building2, FileText, Landmark } from "lucide-react";
+import { Plus, Package, Hash, Ruler, DollarSign, CheckCircle, Calendar } from "lucide-react";
 import { toast } from "sonner";
 
-export function CustomersPage() {
-  useDocumentTitle("sidebar.customersList");
+export function ProductsPage() {
+  useDocumentTitle("sidebar.productsList");
   const { t } = useTranslation();
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [products, setProducts] = useState<ProductListItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -22,14 +23,14 @@ export function CustomersPage() {
   const [filters, setFilters] = useState<{ field: string; value: string }[]>([]);
   const abortRef = useRef<AbortController | null>(null);
 
-  const loadCustomers = useCallback(async () => {
+  const loadProducts = useCallback(async () => {
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
     setLoading(true);
     try {
-      const response = await customerService.getAll({
+      const response = await productService.getAll({
         page,
         pageSize,
         sortBy: sort.sortBy,
@@ -38,7 +39,7 @@ export function CustomersPage() {
       }, controller.signal);
       if (controller.signal.aborted) return;
       const result = response.data.data;
-      setCustomers(result.items);
+      setProducts(result.items);
       setTotalCount(result.totalCount);
     } catch (error: any) {
       if (error.name === "CanceledError") return;
@@ -51,75 +52,63 @@ export function CustomersPage() {
   }, [page, pageSize, sort, filters, t]);
 
   useEffect(() => {
-    loadCustomers();
-  }, [loadCustomers]);
+    loadProducts();
+  }, [loadProducts]);
 
-  const columns: Column<Customer>[] = [
+  const columns: Column<ProductListItem>[] = [
     {
       key: "code",
-      label: t("customers.code"),
+      label: t("products.code"),
       icon: <Hash className="h-4 w-4" />,
-      placeholder: "C-002",
       sortable: true,
       filterable: true,
       className: "font-mono text-xs",
-      render: (c) => c.code,
+      render: (p) => (
+        <Link to={`/products/${p.id}`} className="hover:underline">
+          {p.code}
+        </Link>
+      ),
     },
     {
-      key: "companyName",
-      label: t("customers.companyName"),
-      icon: <Building2 className="h-4 w-4" />,
-      placeholder: t("ABC A.Ş."),
+      key: "name",
+      label: t("products.name"),
+      icon: <Package className="h-4 w-4" />,
       sortable: true,
       filterable: true,
       className: "font-medium",
-      render: (c) => c.companyName,
+      render: (p) => p.name,
     },
     {
-      key: "taxNumber",
-      label: t("customers.taxNumber"),
-      icon: <FileText className="h-4 w-4" />,
-      placeholder: "1111111111",
+      key: "unit",
+      label: t("products.unit"),
+      icon: <Ruler className="h-4 w-4" />,
       sortable: true,
       filterable: true,
-      render: (c) => c.taxNumber || "-",
+      render: (p) => p.unit,
     },
     {
-      key: "taxOffice",
-      label: t("customers.taxOffice"),
-      icon: <Landmark className="h-4 w-4" />,
-      placeholder: "Bakırköy V.D",
+      key: "salePrice",
+      label: t("products.salePrice"),
+      icon: <DollarSign className="h-4 w-4" />,
       sortable: true,
-      filterable: true,
-      render: (c) => c.taxOffice || "-",
+      render: (p) =>
+        p.salePrice != null
+          ? new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(p.salePrice)
+          : "-",
     },
     {
-      key: "phone",
-      label: t("customers.phone"),
-      icon: <Phone className="h-4 w-4" />,
-      placeholder: "555 444 ...",
-      filterable: true,
-      render: (c) => c.phone.length > 0
-        ? (
-          <span className="inline-flex items-center gap-1">
-            <Phone className="h-3 w-3 shrink-0" />
-            <span>{c.phone.join(", ")}</span>
-          </span>
-        ) : "-",
+      key: "isActive",
+      label: t("products.isActive"),
+      icon: <CheckCircle className="h-4 w-4" />,
+      sortable: true,
+      render: (p) => (p.isActive ? t("common.yes") : t("common.no")),
     },
     {
-      key: "email",
-      label: t("customers.email"),
-      icon: <Mail className="h-4 w-4" />,
-      placeholder: "abc@abc.com",
-      filterable: true,
-      render: (c) => c.email.length > 0
-        ? (
-          <span className="inline-flex items-center gap-1">
-            <Mail className="h-3 w-3 shrink-0" />
-            <span>{c.email.join(", ")}</span>
-          </span>
-        ) : "-",
+      key: "createdAt",
+      label: t("common.createdAt"),
+      icon: <Calendar className="h-4 w-4" />,
+      sortable: true,
+      render: (p) => new Date(p.createdAt).toLocaleDateString("tr-TR"),
     },
   ];
 
@@ -127,31 +116,31 @@ export function CustomersPage() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("sidebar.customersList")}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("sidebar.productsList")}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {t("customers.pageDescription")}
+            {t("products.pageDescription")}
           </p>
         </div>
         <Button onClick={() => setDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          {t("customers.add")}
+          {t("products.add")}
         </Button>
       </div>
 
-      <CreateCustomerDialog
+      <CreateProductDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        onSuccess={loadCustomers}
+        onSuccess={loadProducts}
       />
 
       <DataTable
         columns={columns}
-        data={customers}
+        data={products}
         totalCount={totalCount}
         page={page}
         pageSize={pageSize}
         loading={loading}
-        emptyMessage={t("customers.empty")}
+        emptyMessage={t("products.empty")}
         sort={sort}
         filters={filters}
         onPageChange={setPage}

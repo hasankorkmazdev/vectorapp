@@ -47,8 +47,8 @@ export function DataTableHeader<T>({
                   !col.sortable && "pointer-events-none",
                 )}
                 onClick={() => col.sortable && handleSort(col.key)}
-                disabled={!col.sortable}
               >
+                {col.icon && <span className="">{col.icon}</span>}
                 {col.label}
                 {col.sortable && (
                   sort?.sortBy === col.key
@@ -58,14 +58,13 @@ export function DataTableHeader<T>({
                     : <ChevronsUpDown className="h-3 w-3 shrink-0 text-muted-foreground/50" />
                 )}
               </Button>
-              {col.filterable && (
-                <Input
-                  placeholder={col.label}
-                  value={filterValues[col.key] || ""}
-                  onChange={(e) => onFilterChange(col.key, e.target.value)}
-                  className="h-7 text-xs px-2"
-                />
-              )}
+              <Input
+                placeholder={col.placeholder || ""}
+                value={filterValues[col.key] || ""}
+                onChange={(e) => col.filterable && onFilterChange(col.key, e.target.value)}
+                disabled={!col.filterable}
+                className="h-7 text-xs px-2"
+              />
             </div>
           </TableHead>
         ))}

@@ -17,6 +17,7 @@ namespace Vector.Api.Models.Customer
         public CreateCustomerRequestValidator()
         {
             RuleFor(x => x.CompanyName).NotEmpty();
+            RuleFor(x => x.TaxNumber).MaximumLength(11).Matches("^[0-9]*$").When(x => !string.IsNullOrEmpty(x.TaxNumber));
         }
     }
 }

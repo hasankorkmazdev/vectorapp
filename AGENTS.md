@@ -70,7 +70,7 @@ Services/
 3. **All API messages in English.** Use FluentValidation's default messages when possible.
 4. **No magic strings** in frontend — always use i18n locale files (`src/i18n/locales/{en,tr}/`).
 5. **Use shadcn/ui components** (`src/components/ui/`) in their original form — never raw `<input>`, `<button>`, etc. Components from `src/components/ui/` must be used as-is; do not add extra styling, wrapper divs, or override className unless the component exposes it via props. This ensures visual consistency across pages.
-6. **Every input** must have validation error in red below + a description.
+6. **Every input** must have validation error (`FormMessage`) in red below + a description (`FormDescription`).
 7. **Components must be small logical pieces** — avoid monolithic components.
 8. Locale files are flat-merged at runtime (no nested JSON key structure).
 9. **Küçük mantıksal parçalara ayır** — tek bir fonksiyon/component birden fazla iş yapmamalı. Backend'de servisleri, frontend'de componentleri mantıksal sınırlarına göre böl.

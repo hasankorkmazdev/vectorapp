@@ -73,11 +73,11 @@ export const getNavigation = (t: any): NavigationConfig => ({
       ],
     },
     {
-      groupLabel: t("sidebar.stock"),
+      groupLabel: t("sidebar.products"),
       items: [
         {
-          title: t("sidebar.stockItems"),
-          url: "/stock",
+          title: t("sidebar.productsList"),
+          url: "/products",
           icon: Package,
         },
       ],

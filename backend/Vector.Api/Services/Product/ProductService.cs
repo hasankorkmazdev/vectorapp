@@ -1,0 +1,336 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Vector.Api.Data;
+using Vector.Api.Entities;
+using Vector.Api.Models.Product;
+
+namespace Vector.Api.Services.Product
+{
+    public class ProductService : IProductService
+    {
+        private readonly ApplicationDbContext _context;
+
+        public ProductService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public IQueryable<ProductListDto> GetQueryable(Guid organizationId)
+        {
+            return _context.Products
+                .Where(p => p.OrganizationId == organizationId)
+                .Select(p => new ProductListDto
+                {
+                    Id = p.Id,
+                    Code = p.Code,
+                    Name = p.Name,
+                    Unit = p.Unit,
+                    SalePrice = p.SalePrice,
+                    IsActive = p.IsActive,
+                    CreatedAt = p.CreatedAt,
+                    UpdatedAt = p.UpdatedAt
+                });
+        }
+
+        public async Task<ProductDto?> GetByIdAsync(Guid organizationId, Guid id)
+        {
+            return await _context.Products
+                .Include(p => p.ComponentBomItems.Where(b => b.DeletedAt == null))
+                    .ThenInclude(b => b.ComponentProduct)
+                .Where(p => p.OrganizationId == organizationId && p.Id == id)
+                .Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    Code = p.Code,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Unit = p.Unit,
+                    SalePrice = p.SalePrice,
+                    IsActive = p.IsActive,
+                    CreatedAt = p.CreatedAt,
+                    UpdatedAt = p.UpdatedAt,
+                    BomItems = p.ComponentBomItems.Where(b => b.DeletedAt == null).Select(b => new BomItemDto
+                    {
+                        Id = b.Id,
+                        ComponentProductId = b.ComponentProductId,
+                        ComponentProductCode = b.ComponentProduct!.Code,
+                        ComponentProductName = b.ComponentProduct.Name,
+                        ComponentProductUnit = b.ComponentProduct.Unit,
+                        Quantity = b.Quantity,
+                        Notes = b.Notes,
+                        CreatedAt = b.CreatedAt
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<ProductDto> CreateAsync(Guid organizationId, Guid userId, CreateProductRequest request)
+        {
+            var count = await _context.Products
+                .IgnoreQueryFilters()
+                .CountAsync(p => p.OrganizationId == organizationId);
+
+            var entity = new ProductEntity
+            {
+                Id = Guid.NewGuid(),
+                OrganizationId = organizationId,
+                Code = $"PRD{(count + 1):D5}",
+                Name = request.Name,
+                Description = request.Description,
+                Unit = request.Unit,
+                SalePrice = request.SalePrice,
+                CreatedById = userId
+            };
+
+            _context.Products.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return new ProductDto
+            {
+                Id = entity.Id,
+                Code = entity.Code,
+                Name = entity.Name,
+                Description = entity.Description,
+                Unit = entity.Unit,
+                SalePrice = entity.SalePrice,
+                IsActive = entity.IsActive,
+                CreatedAt = entity.CreatedAt,
+                UpdatedAt = entity.UpdatedAt
+            };
+        }
+
+        public async Task<ProductDto?> UpdateAsync(Guid organizationId, Guid userId, Guid id, UpdateProductRequest request)
+        {
+            var entity = await _context.Products
+                .FirstOrDefaultAsync(p => p.OrganizationId == organizationId && p.Id == id);
+
+            if (entity == null) return null;
+
+            entity.Name = request.Name;
+            entity.Description = request.Description;
+            entity.Unit = request.Unit;
+            entity.SalePrice = request.SalePrice;
+            entity.IsActive = request.IsActive;
+            entity.UpdatedById = userId;
+
+            await _context.SaveChangesAsync();
+
+            return await GetByIdAsync(organizationId, id);
+        }
+
+        public async Task<bool> DeleteAsync(Guid organizationId, Guid userId, Guid id)
+        {
+            var entity = await _context.Products
+                .FirstOrDefaultAsync(p => p.OrganizationId == organizationId && p.Id == id);
+
+            if (entity == null) return false;
+
+            _context.Products.Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<BomTreeDto> GetBomTreeAsync(Guid organizationId, Guid productId)
+        {
+            var allBomItems = await _context.BomItems
+                .Where(b => b.OrganizationId == organizationId && b.DeletedAt == null)
+                .ToListAsync();
+
+            var productIds = new HashSet<Guid>();
+            void CollectIds(Guid pid)
+            {
+                if (!productIds.Add(pid)) return;
+                foreach (var item in allBomItems.Where(b => b.ParentProductId == pid))
+                    CollectIds(item.ComponentProductId);
+            }
+            CollectIds(productId);
+            productIds.Add(productId);
+
+            var products = await _context.Products
+                .Where(p => productIds.Contains(p.Id))
+                .ToDictionaryAsync(p => p.Id);
+
+            var nodes = new List<BomTreeNodeDto>();
+            var edges = new List<BomTreeEdgeDto>();
+            var visited = new HashSet<Guid>();
+
+            void BuildTree(Guid pid, decimal quantity, bool isRoot)
+            {
+                if (!visited.Add(pid)) return;
+                if (!products.TryGetValue(pid, out var prod)) return;
+
+                nodes.Add(new BomTreeNodeDto
+                {
+                    Id = pid,
+                    ProductCode = prod.Code,
+                    ProductName = prod.Name,
+                    ProductUnit = prod.Unit,
+                    Quantity = quantity,
+                    IsRoot = isRoot
+                });
+
+                foreach (var item in allBomItems.Where(b => b.ParentProductId == pid))
+                {
+                    edges.Add(new BomTreeEdgeDto
+                    {
+                        Id = item.Id,
+                        SourceId = pid,
+                        TargetId = item.ComponentProductId,
+                        Quantity = item.Quantity
+                    });
+                    BuildTree(item.ComponentProductId, item.Quantity, false);
+                }
+            }
+
+            BuildTree(productId, 1, true);
+
+            return new BomTreeDto { Nodes = nodes, Edges = edges };
+        }
+
+        public async Task<BomItemDto?> CreateBomItemAsync(Guid organizationId, Guid productId, CreateBomItemRequest request)
+        {
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p => p.OrganizationId == organizationId && p.Id == productId);
+
+            if (product == null) return null;
+
+            var component = await _context.Products
+                .FirstOrDefaultAsync(p => p.OrganizationId == organizationId && p.Id == request.ComponentProductId);
+
+            if (component == null) return null;
+
+            if (productId == request.ComponentProductId)
+                return null;
+
+            if (await HasCircularReferenceAsync(organizationId, productId, request.ComponentProductId))
+                return null;
+
+            var existingBom = await _context.BomItems
+                .FirstOrDefaultAsync(b =>
+                    b.OrganizationId == organizationId &&
+                    b.ParentProductId == productId &&
+                    b.ComponentProductId == request.ComponentProductId &&
+                    b.DeletedAt == null);
+
+            if (existingBom != null)
+            {
+                existingBom.Quantity += request.Quantity;
+                existingBom.Notes = request.Notes ?? existingBom.Notes;
+                await _context.SaveChangesAsync();
+
+                return new BomItemDto
+                {
+                    Id = existingBom.Id,
+                    ComponentProductId = component.Id,
+                    ComponentProductCode = component.Code,
+                    ComponentProductName = component.Name,
+                    ComponentProductUnit = component.Unit,
+                    Quantity = existingBom.Quantity,
+                    Notes = existingBom.Notes,
+                    CreatedAt = existingBom.CreatedAt
+                };
+            }
+
+            var bomItem = new BomItemEntity
+            {
+                Id = Guid.NewGuid(),
+                OrganizationId = organizationId,
+                ParentProductId = productId,
+                ComponentProductId = request.ComponentProductId,
+                Quantity = request.Quantity,
+                Notes = request.Notes
+            };
+
+            _context.BomItems.Add(bomItem);
+            await _context.SaveChangesAsync();
+
+            return new BomItemDto
+            {
+                Id = bomItem.Id,
+                ComponentProductId = component.Id,
+                ComponentProductCode = component.Code,
+                ComponentProductName = component.Name,
+                ComponentProductUnit = component.Unit,
+                Quantity = bomItem.Quantity,
+                Notes = bomItem.Notes,
+                CreatedAt = bomItem.CreatedAt
+            };
+        }
+
+        public async Task<BomItemDto?> UpdateBomItemAsync(Guid organizationId, Guid bomItemId, UpdateBomItemRequest request)
+        {
+            var bomItem = await _context.BomItems
+                .Include(b => b.ComponentProduct)
+                .FirstOrDefaultAsync(b =>
+                    b.OrganizationId == organizationId &&
+                    b.Id == bomItemId &&
+                    b.DeletedAt == null);
+
+            if (bomItem == null) return null;
+
+            bomItem.Quantity = request.Quantity;
+            bomItem.Notes = request.Notes;
+
+            await _context.SaveChangesAsync();
+
+            return new BomItemDto
+            {
+                Id = bomItem.Id,
+                ComponentProductId = bomItem.ComponentProductId,
+                ComponentProductCode = bomItem.ComponentProduct!.Code,
+                ComponentProductName = bomItem.ComponentProduct.Name,
+                ComponentProductUnit = bomItem.ComponentProduct.Unit,
+                Quantity = bomItem.Quantity,
+                Notes = bomItem.Notes,
+                CreatedAt = bomItem.CreatedAt
+            };
+        }
+
+        public async Task<bool> DeleteBomItemAsync(Guid organizationId, Guid bomItemId)
+        {
+            var bomItem = await _context.BomItems
+                .FirstOrDefaultAsync(b =>
+                    b.OrganizationId == organizationId &&
+                    b.Id == bomItemId &&
+                    b.DeletedAt == null);
+
+            if (bomItem == null) return false;
+
+            _context.BomItems.Remove(bomItem);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        private async Task<bool> HasCircularReferenceAsync(Guid organizationId, Guid parentProductId, Guid componentProductId)
+        {
+            var allBomItems = await _context.BomItems
+                .Where(b => b.OrganizationId == organizationId && b.DeletedAt == null)
+                .ToListAsync();
+
+            var ancestors = new HashSet<Guid>();
+            var queue = new Queue<Guid>();
+            queue.Enqueue(componentProductId);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                var parents = allBomItems
+                    .Where(b => b.ComponentProductId == current)
+                    .Select(b => b.ParentProductId);
+
+                foreach (var parent in parents)
+                {
+                    if (parent == parentProductId)
+                        return true;
+                    if (ancestors.Add(parent))
+                        queue.Enqueue(parent);
+                }
+            }
+
+            return false;
+        }
+    }
+}
