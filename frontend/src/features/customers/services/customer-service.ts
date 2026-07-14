@@ -1,106 +1,75 @@
 import { api } from "@/api/axios";
-
-export interface CustomerContact {
-  id: string;
-  fullName: string;
-  title: string | null;
-  email: string | null;
-  phone: string | null;
-  gsm?: string | null;
-  isPrimary: boolean;
-}
-
-export interface CustomerAddress {
-  id: string;
-  label: string;
-  country: string | null;
-  city: string | null;
-  district: string | null;
-  postalCode: string | null;
-  address: string | null;
-  isPrimary: boolean;
-}
-
-export interface Customer {
-  id: string;
-  code: string;
-  companyName: string;
-  taxNumber: string | null;
-  taxOffice: string | null;
-  phone: string[];
-  email: string[];
-  createdAt: string;
-  updatedAt: string | null;
-  contacts: CustomerContact[];
-  addresses: CustomerAddress[];
-}
-
-export interface CreateCustomerData {
-  companyName: string;
-  taxNumber?: string;
-  taxOffice?: string;
-  phone?: string[];
-  email?: string[];
-}
-
-export interface UpdateCustomerData extends CreateCustomerData {}
-
-export interface CreateContactData {
-  fullName: string;
-  title?: string;
-  email?: string;
-  phone?: string;
-  gsm?: string;
-  isPrimary?: boolean;
-}
-
-export interface UpdateContactData extends CreateContactData {}
-
-export interface CreateAddressData {
-  label: string;
-  country?: string;
-  city?: string;
-  district?: string;
-  postalCode?: string;
-  address?: string;
-  isPrimary?: boolean;
-}
-
-export interface UpdateAddressData extends CreateAddressData {}
-
-export interface PagedResult<T> {
-  items: T[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
-
-export interface CustomerListParams {
-  page?: number;
-  pageSize?: number;
-  sortBy?: string;
-  sortDirection?: string;
-  filters?: { field: string; value: string }[];
-}
+import type { FilterValue } from "@/components/data-table/types";
+import type {
+  Customer,
+  CustomerContact,
+  CustomerAddress,
+  CreateCustomerData,
+  UpdateCustomerData,
+  CreateContactData,
+  UpdateContactData,
+  CreateAddressData,
+  UpdateAddressData,
+  PagedResult,
+  CustomerListParams,
+} from "@/features/customers/types";
 
 const COLLECTION_FIELDS = new Set(["phone", "email"]);
 
-function toFilter(field: string, value: string): string {
-  const val = value.replace(/'/g, "''");
-  if (COLLECTION_FIELDS.has(field)) {
-    const varName = field === "phone" ? "p" : "e";
-    return `${field}/any(${varName}: contains(${varName},'${val}'))`;
+function toFilterValue(filter: FilterValue): string {
+  const esc = (s: string) => s.replace(/'/g, "''");
+
+  switch (filter.type) {
+    case "text":
+      if (COLLECTION_FIELDS.has(filter.field)) {
+        return `${filter.field}/any(x: contains(tolower(x),'${esc(filter.value as string).toLowerCase()}'))`;
+      }
+      return `contains(tolower(${filter.field}),'${esc(filter.value as string).toLowerCase()}')`;
+
+    case "number":
+      return `${filter.field} ${filter.operator || "eq"} ${filter.value}`;
+
+    case "date": {
+      const parts: string[] = [];
+      if (filter.from) parts.push(`${filter.field} ge ${filter.from}`);
+      if (filter.to) parts.push(`${filter.field} le ${filter.to}`);
+      return parts.join(" and ");
+    }
+
+    case "boolean":
+      return `${filter.field} eq ${filter.value}`;
+
+    case "select":
+      if (typeof filter.value === "string") {
+        return `${filter.field} eq '${esc(filter.value)}'`;
+      }
+      return `${filter.field} eq ${filter.value}`;
+
+    case "multi-select": {
+      const vals = filter.value as (string | number)[];
+      if (vals.length === 0) return "";
+      return vals.map((v) =>
+        typeof v === "string"
+          ? `${filter.field} eq '${esc(v)}'`
+          : `${filter.field} eq ${v}`
+      ).join(" or ");
+    }
+
+    default:
+      return "";
   }
-  return `contains(${field},'${val}')`;
 }
 
 function buildODataQuery(params: CustomerListParams): string {
   const parts: string[] = [];
 
   if (params.filters && params.filters.length > 0) {
-    const filterParts = params.filters.map((f) => toFilter(f.field, f.value));
-    parts.push(`$filter=${filterParts.join(" and ")}`);
+    const filterParts = params.filters
+      .map((f) => toFilterValue(f))
+      .filter(Boolean);
+    if (filterParts.length > 0) {
+      parts.push(`$filter=${filterParts.join(" and ")}`);
+    }
   }
 
   if (params.sortBy) {

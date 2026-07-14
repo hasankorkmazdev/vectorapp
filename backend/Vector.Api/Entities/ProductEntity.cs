@@ -13,6 +13,9 @@ namespace Vector.Api.Entities
         public string Unit { get; set; } = string.Empty;
         public decimal? SalePrice { get; set; }
         public bool IsActive { get; set; } = true;
+        public decimal StockQuantity { get; set; }
+        public decimal? AvgCost { get; set; }
+        public decimal? LastPurchasePrice { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
@@ -22,5 +25,6 @@ namespace Vector.Api.Entities
 
         public List<BomItemEntity> ParentBomItems { get; set; } = new();
         public List<BomItemEntity> ComponentBomItems { get; set; } = new();
+        public List<StockMovementEntity> StockMovements { get; set; } = new();
     }
 }

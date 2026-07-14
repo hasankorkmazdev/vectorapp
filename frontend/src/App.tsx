@@ -12,7 +12,7 @@ import { CustomersPage } from "./features/customers/pages/CustomersPage";
 import { VisitsPage } from "./features/visits/pages/VisitsPage";
 import { MarketingPage } from "./features/marketing/pages/MarketingPage";
 import { SuppliersPage } from "./features/suppliers/pages/SuppliersPage";
-import { ProductsPage } from "./features/products/pages/ProductsPage";
+import { StocksPage } from "./features/products/pages/ProductsPage";
 import { ProductDetailPage } from "./features/products/pages/ProductDetailPage";
 import { EditProductPage } from "./features/products/pages/EditProductPage";
 import { MonitorPage } from "./features/accounting/pages/MonitorPage";
@@ -46,7 +46,7 @@ function App() {
               <Route path="/visits" element={<VisitsPage />} />
               <Route path="/marketing" element={<MarketingPage />} />
               <Route path="/suppliers" element={<SuppliersPage />} />
-              <Route path="/products" element={<ProductsPage />} />
+              <Route path="/products" element={<StocksPage />} />
               <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/products/:id/edit" element={<EditProductPage />} />
               <Route path="/accounting/monitor" element={<MonitorPage />} />

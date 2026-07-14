@@ -77,6 +77,7 @@ Services/
 10. **Tekrar eden yapıları componentleştir** — bir UI kalıbı 2+ yerde kullanılıyorsa ortak bir component olarak ayır.
 11. **Max 300 satır** — component veya sayfa dosyaları 300 satırı geçmemeli. Geçiyorsa mantıksal alt parçalara böl.
 12. **Sadece Türkçe localization** — yeni eklenen metinler yalnızca `tr/common.json` ve varsa `tr/` altındaki locale dosyalarına girilir. `en/` dosyalarına ekleme yapılmaz.
+13. **Ternary `:` kullanımı** — JSX içinde ternary (`condition ? <A> : <B>`) kullanıldığında, `:` öncesi ve sonrası ayrı fonksiyonlara çıkarılmalıdır (`renderLoading()`, `renderEmpty()`, `renderContent()` gibi). Ternary yalnızca hangi fonksiyonun çağrılacağını seçmek için kullanılır, JSX doğrudan ternary içine yazılmaz.
 
 ### Null handling
 **No `??` fallbacks** — if a value is null, let it throw at runtime. Do not add default/fallback values.

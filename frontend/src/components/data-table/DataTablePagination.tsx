@@ -39,6 +39,23 @@ export function DataTablePagination({
   const { t } = useTranslation();
   const totalPages = Math.max(1, Math.ceil(totalCount / Math.max(pageSize, 1)));
   const pageNumbers = getPageNumbers(page, totalPages);
+
+  function renderPageButton(p: number | "...", i: number) {
+    if (p === "...") {
+      return <span key={`ellipsis-${i}`} className="px-1 text-xs text-muted-foreground">...</span>;
+    }
+    return (
+      <Button
+        key={p}
+        variant={page === p ? "outline" : "ghost"}
+        size="sm"
+        onClick={() => onPageChange(p as number)}
+        className="h-7 min-w-7 px-1 text-xs"
+      >
+        {p}
+      </Button>
+    );
+  }
   const startItem = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;
   const endItem = Math.min(page * pageSize, totalCount);
 
@@ -74,21 +91,7 @@ export function DataTablePagination({
           <ChevronLeft className="h-4 w-4" />
         </Button>
 
-        {pageNumbers.map((p, i) =>
-          p === "..." ? (
-            <span key={`ellipsis-${i}`} className="px-1 text-xs text-muted-foreground">...</span>
-          ) : (
-            <Button
-              key={p}
-              variant={page === p ? "outline" : "ghost"}
-              size="sm"
-              onClick={() => onPageChange(p as number)}
-              className="h-7 min-w-7 px-1 text-xs"
-            >
-              {p}
-            </Button>
-          )
-        )}
+        {pageNumbers.map((p, i) => renderPageButton(p, i))}
 
         <Button
           variant="ghost"

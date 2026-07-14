@@ -21,6 +21,12 @@ interface MetricCardProps {
 }
 
 function MetricCard({ label, value, isCurrency = true, icon, trend, trendLabel }: MetricCardProps) {
+  function renderTrendIcon() {
+    if (trend === "up") return <TrendingUp className="h-3 w-3" />;
+    if (trend === "down") return <TrendingDown className="h-3 w-3" />;
+    return null;
+  }
+
   return (
     <Card className="relative overflow-hidden">
       <CardContent className="p-6">
@@ -32,7 +38,7 @@ function MetricCard({ label, value, isCurrency = true, icon, trend, trendLabel }
             </p>
             {trendLabel && (
               <p className={`text-xs flex items-center gap-1 ${trend === "up" ? "text-emerald-500" : trend === "down" ? "text-red-500" : "text-muted-foreground"}`}>
-                {trend === "up" ? <TrendingUp className="h-3 w-3" /> : trend === "down" ? <TrendingDown className="h-3 w-3" /> : null}
+                {renderTrendIcon()}
                 {trendLabel}
               </p>
             )}

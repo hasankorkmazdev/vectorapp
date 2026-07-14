@@ -14,6 +14,13 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
   ({ className, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false)
 
+    function renderToggleIcon() {
+        if (showPassword) {
+            return <EyeOffIcon className="h-4 w-4" />;
+        }
+        return <EyeIcon className="h-4 w-4" />;
+    }
+
     return (
       <InputGroup className={cn("w-full", className)}>
         <InputGroupInput
@@ -28,11 +35,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
           onClick={() => setShowPassword(!showPassword)}
           title={showPassword ? "Hide password" : "Show password"}
         >
-          {showPassword ? (
-            <EyeOffIcon className="h-4 w-4" />
-          ) : (
-            <EyeIcon className="h-4 w-4" />
-          )}
+          {renderToggleIcon()}
         </InputGroupAddon>
       </InputGroup>
     )

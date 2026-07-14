@@ -4,7 +4,8 @@ import {
   Table, TableBody, TableCell, TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
-import type { DataTableProps } from "./types";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { DataTableProps, FilterValue } from "./types";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTablePagination } from "./DataTablePagination";
 import { cn } from "@/lib/utils";
@@ -26,8 +27,8 @@ export function DataTable<T extends { id: string }>({
 }: DataTableProps<T>) {
   const { t } = useTranslation();
 
-  const [localFilters, setLocalFilters] = useState<Record<string, string>>(
-    () => Object.fromEntries(filters.map((f) => [f.field, f.value]))
+  const [localFilters, setLocalFilters] = useState<Record<string, FilterValue>>(
+    () => Object.fromEntries(filters.map((f) => [f.field, f]))
   );
   const prevFilterStr = useRef(JSON.stringify(filters));
   const prevEntriesStr = useRef("[]");
@@ -37,27 +38,75 @@ export function DataTable<T extends { id: string }>({
     const str = JSON.stringify(filters);
     if (str !== prevFilterStr.current) {
       prevFilterStr.current = str;
-      setLocalFilters(Object.fromEntries(filters.map((f) => [f.field, f.value])));
+      setLocalFilters(Object.fromEntries(filters.map((f) => [f.field, f])));
     }
   }, [filters]);
 
   useEffect(() => {
-    const entries = Object.entries(localFilters)
-      .filter(([, v]) => v.length > 0)
-      .map(([field, value]) => ({ field, value }));
+    const entries = Object.values(localFilters).filter((f) => {
+      if (f.type === "text") return (f.value as string).length > 0;
+      if (f.type === "number") return f.value != null;
+      if (f.type === "date") return !!(f.from || f.to);
+      if (f.type === "boolean") return f.value != null;
+      if (f.type === "select") return f.value != null && f.value !== "";
+      if (f.type === "multi-select") return Array.isArray(f.value) && f.value.length > 0;
+      return false;
+    });
     const str = JSON.stringify(entries);
     if (str !== prevEntriesStr.current) {
       prevEntriesStr.current = str;
       clearTimeout(debounceTimer.current);
-      debounceTimer.current = setTimeout(() => onFilter(entries), 300);
+      debounceTimer.current = setTimeout(() => onFilter(entries), 400);
     }
   }, [localFilters]);
 
-  const handleFilterChange = (field: string, value: string) => {
-    setLocalFilters((prev) => ({ ...prev, [field]: value }));
+  const handleFilterChange = (field: string, filter: FilterValue | null) => {
+    setLocalFilters((prev) => {
+      const next = { ...prev };
+      if (filter) {
+        next[field] = filter;
+      } else {
+        delete next[field];
+      }
+      return next;
+    });
   };
 
   const isEmpty = !loading && data.length === 0;
+
+  function renderLoading() {
+    return Array.from({ length: 5 }).map((_, i) => (
+      <TableRow key={`skeleton-${i}`}>
+        {columns.map((col) => (
+          <TableCell key={col.key} className={cn("px-5 pt-3 pb-3", col.className)}>
+            <Skeleton className="h-4 w-full" />
+          </TableCell>
+        ))}
+      </TableRow>
+    ));
+  }
+
+  function renderEmpty() {
+    return (
+      <TableRow>
+        <TableCell colSpan={columns.length} className="h-40 text-center text-muted-foreground">
+          <p className="text-sm">{emptyMessage || t("common.empty")}</p>
+        </TableCell>
+      </TableRow>
+    );
+  }
+
+  function renderContent() {
+    return data.map((item) => (
+      <TableRow key={item.id}>
+        {columns.map((col) => (
+          <TableCell key={col.key} className={cn("px-5 pt-3 pb-3 ",col.className)}>
+            {col.render(item)}
+          </TableCell>
+        ))}
+      </TableRow>
+    ));
+  }
 
   return (
     <Card>
@@ -71,31 +120,7 @@ export function DataTable<T extends { id: string }>({
             onFilterChange={handleFilterChange}
           />
           <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-40 text-center">
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : isEmpty ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-40 text-center text-muted-foreground">
-                  <p className="text-sm">{emptyMessage || t("common.empty")}</p>
-                </TableCell>
-              </TableRow>
-            ) : (
-              data.map((item) => (
-                <TableRow key={item.id}>
-                  {columns.map((col) => (
-                    <TableCell key={col.key} className={cn("px-5 pt-3 pb-3 ",col.className)}>
-                      {col.render(item)}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            )}
+            {loading ? renderLoading() : isEmpty ? renderEmpty() : renderContent()}
           </TableBody>
         </Table>
 

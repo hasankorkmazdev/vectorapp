@@ -34,6 +34,19 @@ export function VerifyEmailPage({
     const [verified, setVerified] = useState(false);
     const [verifyError, setVerifyError] = useState("");
 
+    function renderStatus() {
+      if (verifying) {
+        return <p className="text-sm text-center text-muted-foreground">{t("common.loading")}</p>;
+      }
+      if (verified) {
+        return <p className="text-sm text-center text-green-500 font-medium">{t("verifyEmail.emailVerified")}</p>;
+      }
+      if (verifyError) {
+        return <p className="text-sm text-center text-red-500 font-medium">{verifyError}</p>;
+      }
+      return <p className="text-sm text-muted-foreground text-center">{t("verifyEmail.hint")}</p>;
+    }
+
     useEffect(() => {
         if (urlEmail && urlToken) {
             setVerifying(true);
@@ -106,23 +119,7 @@ export function VerifyEmailPage({
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col gap-4">
-                        {verifying ? (
-                            <p className="text-sm text-center text-muted-foreground">
-                                {t("common.loading")}
-                            </p>
-                        ) : verified ? (
-                            <p className="text-sm text-center text-green-500 font-medium">
-                                {t("verifyEmail.emailVerified")}
-                            </p>
-                        ) : verifyError ? (
-                            <p className="text-sm text-center text-red-500 font-medium">
-                                {verifyError}
-                            </p>
-                        ) : (
-                            <p className="text-sm text-muted-foreground text-center">
-                                {t("verifyEmail.hint")}
-                            </p>
-                        )}
+                        {renderStatus()}
 
                         {email && !verified && (
                             <Button

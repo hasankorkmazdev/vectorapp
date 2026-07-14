@@ -5,6 +5,7 @@ using Vector.Api.Attributes;
 using Vector.Api.Extensions;
 using Vector.Api.Models.Common;
 using Vector.Api.Models.Product;
+using Vector.Api.Models.Stock;
 using Vector.Api.Services.Product;
 using System;
 using System.Threading.Tasks;
@@ -117,6 +118,47 @@ namespace Vector.Api.Controllers
             if (!deleted)
                 return NotFound(Result.Failure("BOM item not found.", 404));
             return Ok(Result.Success("BOM item deleted successfully."));
+        }
+
+        // ── Stock Endpoints ──
+
+        [HttpGet("{productId}/stock-movements")]
+        [RequiresOrganization]
+        [EnableQuery]
+        public IQueryable<StockMovementDto> GetStockMovements(Guid productId)
+        {
+            var orgId = this.GetOrganizationId();
+            return _productService.GetStockMovementsQueryable(orgId, productId);
+        }
+
+        [HttpPost("{productId}/stock-in")]
+        [RequiresOrganization]
+        public async Task<IActionResult> StockIn(Guid productId, [FromBody] StockInRequest request)
+        {
+            var userId = this.GetUserId();
+            var orgId = this.GetOrganizationId();
+            var movement = await _productService.StockInAsync(orgId, userId, productId, request);
+            return Ok(Result<StockMovementDto>.Success(movement, "Stock in recorded successfully.", 201));
+        }
+
+        [HttpPost("{productId}/stock-out")]
+        [RequiresOrganization]
+        public async Task<IActionResult> StockOut(Guid productId, [FromBody] StockOutRequest request)
+        {
+            var userId = this.GetUserId();
+            var orgId = this.GetOrganizationId();
+            var movement = await _productService.StockOutAsync(orgId, userId, productId, request);
+            return Ok(Result<StockMovementDto>.Success(movement, "Stock out recorded successfully.", 201));
+        }
+
+        [HttpPost("{productId}/stock-adjust")]
+        [RequiresOrganization]
+        public async Task<IActionResult> StockAdjust(Guid productId, [FromBody] StockAdjustRequest request)
+        {
+            var userId = this.GetUserId();
+            var orgId = this.GetOrganizationId();
+            var movement = await _productService.StockAdjustAsync(orgId, userId, productId, request);
+            return Ok(Result<StockMovementDto>.Success(movement, "Stock adjusted successfully.", 201));
         }
     }
 }

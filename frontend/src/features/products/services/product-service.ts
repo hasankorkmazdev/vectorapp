@@ -1,4 +1,5 @@
 import { api } from "@/api/axios";
+import type { FilterValue } from "@/components/data-table/types";
 
 export interface Product {
   id: string;
@@ -8,6 +9,9 @@ export interface Product {
   unit: string;
   salePrice: number | null;
   isActive: boolean;
+  stockQuantity: number;
+  avgCost: number | null;
+  lastPurchasePrice: number | null;
   createdAt: string;
   updatedAt: string | null;
   bomItems: BomItem[];
@@ -20,6 +24,9 @@ export interface ProductListItem {
   unit: string;
   salePrice: number | null;
   isActive: boolean;
+  stockQuantity: number;
+  avgCost: number | null;
+  lastPurchasePrice: number | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -95,17 +102,60 @@ export interface ProductListParams {
   pageSize?: number;
   sortBy?: string;
   sortDirection?: string;
-  filters?: { field: string; value: string }[];
+  filters?: FilterValue[];
+}
+
+function toFilterValue(filter: FilterValue): string {
+  const esc = (s: string) => s.replace(/'/g, "''");
+
+  switch (filter.type) {
+    case "text":
+      return `contains(tolower(${filter.field}),'${esc(filter.value as string).toLowerCase()}')`;
+
+    case "number":
+      return `${filter.field} ${filter.operator || "eq"} ${filter.value}`;
+
+    case "date": {
+      const parts: string[] = [];
+      if (filter.from) parts.push(`${filter.field} ge ${filter.from}`);
+      if (filter.to) parts.push(`${filter.field} le ${filter.to}`);
+      return parts.join(" and ");
+    }
+
+    case "boolean":
+      return `${filter.field} eq ${filter.value}`;
+
+    case "select":
+      if (typeof filter.value === "string") {
+        return `${filter.field} eq '${esc(filter.value)}'`;
+      }
+      return `${filter.field} eq ${filter.value}`;
+
+    case "multi-select": {
+      const vals = filter.value as (string | number)[];
+      if (vals.length === 0) return "";
+      return vals.map((v) =>
+        typeof v === "string"
+          ? `${filter.field} eq '${esc(v)}'`
+          : `${filter.field} eq ${v}`
+      ).join(" or ");
+    }
+
+    default:
+      return "";
+  }
 }
 
 function buildODataQuery(params: ProductListParams): string {
   const parts: string[] = [];
 
   if (params.filters && params.filters.length > 0) {
-    const filterParts = params.filters.map(
-      (f) => `contains(${f.field},'${f.value.replace(/'/g, "''")}')`
-    );
-    parts.push(`$filter=${filterParts.join(" and ")}`);
+    const filterParts = params.filters
+      .map((f) => toFilterValue(f))
+      .filter(Boolean);
+    if (filterParts.length > 0) {
+      parts.push(`$filter=${filterParts.join(" and ")}`);
+    }
   }
 
   if (params.sortBy) {

@@ -157,6 +157,88 @@ export function SettingsPage() {
     }
   };
 
+  function renderCurrencies() {
+    if (priceVaries) {
+      return (
+        <div className="grid gap-6 sm:grid-cols-2">
+          {activeLangs.map((lang) => (
+            <FormField
+              key={lang}
+              control={form.control}
+              name={`currencies.${lang}` as any}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("settings.currencyLabel", {
+                      lang: LANG_NAMES[lang] || lang.toUpperCase(),
+                    })}
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || getDefaultCurrency(lang)}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("settings.currencyLabel")} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {currencyOptions.map((opt) => (
+                        <SelectItem key={opt} value={opt}>
+                          {opt}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    {t("settings.currencyDesc", {
+                      lang: LANG_NAMES[lang] || lang.toUpperCase(),
+                    })}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+        </div>
+      );
+    }
+    return (
+      <FormField
+        control={form.control}
+        name={`currencies.${defaultLang}` as any}
+        render={({ field }) => (
+          <FormItem className="max-w-md">
+            <FormLabel>
+              {t("organizationSetup.singleCurrencyLabel")}
+            </FormLabel>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value || getDefaultCurrency(defaultLang)}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder={t("organizationSetup.singleCurrencyLabel")} />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {currencyOptions.map((opt) => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormDescription>
+              {t("organizationSetup.singleCurrencyDescription")}
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
   const handleLanguageToggle = (langCode: string, checked: boolean) => {
     let currentLangs = [...activeLangs];
     if (checked) {
@@ -350,82 +432,7 @@ export function SettingsPage() {
                   )}
                 />
 
-                {priceVaries ? (
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    {activeLangs.map((lang) => (
-                      <FormField
-                        key={lang}
-                        control={form.control}
-                        name={`currencies.${lang}` as any}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>
-                              {t("settings.currencyLabel", {
-                                lang: LANG_NAMES[lang] || lang.toUpperCase(),
-                              })}
-                            </FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value || getDefaultCurrency(lang)}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder={t("settings.currencyLabel")} />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {currencyOptions.map((opt) => (
-                                  <SelectItem key={opt} value={opt}>
-                                    {opt}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              {t("settings.currencyDesc", {
-                                lang: LANG_NAMES[lang] || lang.toUpperCase(),
-                              })}
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <FormField
-                    control={form.control}
-                    name={`currencies.${defaultLang}` as any}
-                    render={({ field }) => (
-                      <FormItem className="max-w-md">
-                        <FormLabel>
-                          {t("organizationSetup.singleCurrencyLabel")}
-                        </FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value || getDefaultCurrency(defaultLang)}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t("organizationSetup.singleCurrencyLabel")} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {currencyOptions.map((opt) => (
-                              <SelectItem key={opt} value={opt}>
-                                    {opt}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              {t("organizationSetup.singleCurrencyDescription")}
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    )}
+                {renderCurrencies()}
                   </CardContent>
                 </Card>
               )}

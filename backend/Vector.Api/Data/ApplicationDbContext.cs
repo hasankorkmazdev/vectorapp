@@ -33,6 +33,7 @@ namespace Vector.Api.Data
         public DbSet<CustomerAddressEntity> CustomerAddresses => Set<CustomerAddressEntity>();
         public DbSet<ProductEntity> Products => Set<ProductEntity>();
         public DbSet<BomItemEntity> BomItems => Set<BomItemEntity>();
+        public DbSet<StockMovementEntity> StockMovements => Set<StockMovementEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,6 +53,7 @@ namespace Vector.Api.Data
             modelBuilder.Entity<CustomerAddressEntity>().ToTable("CustomerAddresses");
             modelBuilder.Entity<ProductEntity>().ToTable("Products");
             modelBuilder.Entity<BomItemEntity>().ToTable("BomItems");
+            modelBuilder.Entity<StockMovementEntity>().ToTable("StockMovements");
 
             // Composite keys
             modelBuilder.Entity<RolePermissionEntity>()
@@ -138,6 +140,19 @@ namespace Vector.Api.Data
 
             modelBuilder.Entity<BomItemEntity>()
                 .HasIndex(b => b.OrganizationId);
+
+            // StockMovement relationships
+            modelBuilder.Entity<StockMovementEntity>()
+                .HasOne(m => m.Product)
+                .WithMany(p => p.StockMovements)
+                .HasForeignKey(m => m.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockMovementEntity>()
+                .HasIndex(m => m.OrganizationId);
+
+            modelBuilder.Entity<StockMovementEntity>()
+                .HasIndex(m => m.ProductId);
 
             // AutoIncludes for User roles & permissions
             modelBuilder.Entity<RoleEntity>()

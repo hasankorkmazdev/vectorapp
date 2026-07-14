@@ -52,8 +52,8 @@
     "marketing": "Pazarlama",
     "suppliers": "Tedarikçiler",
     "suppliersList": "Tedarikçiler",
-    "products": "Ürün",
-    "productsList": "Ürünler",
+    "stocks": "Stok",
+    "stocksList": "Stoklar",
     "accounting": "Muhasebe",
     "monitor": "İzleme Ekranı",
     "income": "Gelirler",
@@ -147,7 +147,15 @@
     "addressCreateSuccess": "Adres başarıyla eklendi.",
     "addressUpdateSuccess": "Adres başarıyla güncellendi.",
     "close": "Kapat",
-    "saveFirst": "Önce kaydedin"
+    "saveFirst": "Önce kaydedin",
+    "editTitle": "Müşteri Düzenle",
+    "editDescription": "Müşteri bilgilerini güncelleyin.",
+    "updateSuccess": "Müşteri başarıyla güncellendi.",
+    "tabGeneral": "Genel",
+    "tabContacts": "Kişiler",
+    "tabAddresses": "Adresler",
+    "tabProducts": "Ürünler",
+    "productsEmpty": "Bu müşteriye ait ürün bulunmamaktadır."
   },
   "validation": {
     "invalidPhone": "Geçerli bir telefon numarası girin.",
@@ -155,7 +163,9 @@
     "onlyDigits": "Yalnızca rakam girilebilir."
   },
   "dataTable": {
-    "showing": "{{start}} - {{end}} / {{total}}"
+    "showing": "{{start}} - {{end}} / {{total}}",
+    "startDate": "StartDate",
+    "endDate": "EndDate"
   },
   "userMenu": {
     "technicalSupport": "Teknik Destek",
@@ -207,6 +217,39 @@
     "bomDeleteConfirm": "Bu BOM bağlantısını silmek istediğinize emin misiniz?",
     "bomDeleteSuccess": "BOM bileşeni başarıyla silindi.",
     "bomHint": "Düğümlere tıklayarak ürün detayına gidebilir, bağlantılara tıklayarak BOM ilişkisini silebilirsiniz."
+  },
+  "stock": {
+    "pageDescription": "Stok yönetimi ve hareket takibi",
+    "stockQuantity": "Stok Miktarı",
+    "avgCost": "Ort. Birim Maliyet",
+    "lastPurchasePrice": "Son Alış Fiyatı",
+    "stockIn": "Stok Girişi",
+    "stockOut": "Stok Çıkışı",
+    "movements": "Hareketler",
+    "stockInTitle": "Stok Girişi",
+    "stockInDescription": "Ürüne stok girişi yapın. Birim maliyet girilirse ağırlıklı ortalama maliyet otomatik hesaplanır.",
+    "stockInSuccess": "Stok girişi başarıyla kaydedildi.",
+    "stockOutTitle": "Stok Çıkışı",
+    "stockOutDescription": "Üründen stok çıkışı yapın.",
+    "stockOutSuccess": "Stok çıkışı başarıyla kaydedildi.",
+    "quantity": "Miktar",
+    "quantityDescription": "İşlem miktarı",
+    "unitCost": "Birim Maliyet",
+    "unitCostDescription": "Birim maliyet (boş bırakılırsa maliyet etkilenmez)",
+    "totalCost": "Toplam Maliyet",
+    "source": "Kaynak",
+    "sourceDescription": "Stok nereden geldi? (tedarikçi, üretim vb.)",
+    "destination": "Hedef",
+    "destinationDescription": "Stok nereye çıktı? (müşteri, üretim vb.)",
+    "note": "Not",
+    "noteDescription": "İsteğe bağlı açıklama",
+    "movementsTitle": "Stok Hareketleri",
+    "movementsDescription": "Ürüne ait tüm stok hareketleri",
+    "movementsEmpty": "Henüz stok hareketi bulunmuyor.",
+    "typeIn": "Giriş",
+    "typeOut": "Çıkış",
+    "typeAdjustment": "Düzeltme",
+    "empty": "Henüz ürün eklenmemiş"
   },
   "financial": {
     "dashboardTitle": "Ön Muhasebe",

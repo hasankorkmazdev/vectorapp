@@ -1,5 +1,21 @@
 import type { ReactNode } from "react";
 
+export type FilterType = "text" | "number" | "date" | "boolean" | "select" | "multi-select";
+
+export interface FilterValue {
+  field: string;
+  type: FilterType;
+  value?: string | number | boolean | (string | number)[] | null;
+  operator?: string;
+  from?: string;
+  to?: string;
+}
+
+export interface FilterOption {
+  label: string;
+  value: string | number;
+}
+
 export interface Column<T> {
   key: string;
   label: string;
@@ -8,6 +24,8 @@ export interface Column<T> {
   render: (item: T) => ReactNode;
   sortable?: boolean;
   filterable?: boolean;
+  filterType?: FilterType;
+  filterOptions?: FilterOption[] | string;
   className?: string;
   headerClassName?: string;
 }
@@ -15,11 +33,6 @@ export interface Column<T> {
 export interface SortState {
   sortBy: string;
   sortDirection: "asc" | "desc";
-}
-
-export interface FilterValue {
-  field: string;
-  value: string;
 }
 
 export interface DataTableProps<T> {

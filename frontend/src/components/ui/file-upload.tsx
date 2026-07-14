@@ -155,6 +155,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         }
     };
 
+    function renderUploadIcon() {
+        if (uploading) {
+            return <Loader2 className="h-5 w-5 animate-spin text-primary" />;
+        }
+        return <Upload className="h-5 w-5 text-muted-foreground/80" />;
+    }
+
     const triggerBrowse = () => {
         fileInputRef.current?.click();
     };
@@ -189,11 +196,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             >
                 {/* Upload Icon in Circle */}
                 <div className="flex h-11 w-11 items-center justify-center rounded-full border border-muted bg-background shadow-sm text-muted-foreground">
-                    {uploading ? (
-                        <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                    ) : (
-                        <Upload className="h-5 w-5 text-muted-foreground/80" />
-                    )}
+                    {renderUploadIcon()}
                 </div>
 
                 <div className="space-y-1">

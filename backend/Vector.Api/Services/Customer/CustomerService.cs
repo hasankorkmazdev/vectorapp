@@ -80,15 +80,19 @@ namespace Vector.Api.Services.Customer
 
         public async Task<CustomerDto> CreateAsync(Guid organizationId, Guid userId, CreateCustomerRequest request)
         {
-            var count = await _context.Customers
-                .IgnoreQueryFilters()
-                .CountAsync(c => c.OrganizationId == organizationId);
+            var maxCode = await _context.Customers
+                .Where(c => c.OrganizationId == organizationId)
+                .MaxAsync(c => c.Code);
+
+            var nextNumber = 1;
+            if (maxCode != null && maxCode.StartsWith('C') && int.TryParse(maxCode[1..], out var lastNumber))
+                nextNumber = lastNumber + 1;
 
             var entity = new CustomerEntity
             {
                 Id = Guid.NewGuid(),
                 OrganizationId = organizationId,
-                Code = $"C{(count + 1):D4}",
+                Code = $"C{nextNumber:D4}",
                 CompanyName = request.CompanyName,
                 TaxNumber = request.TaxNumber,
                 TaxOffice = request.TaxOffice,

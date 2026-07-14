@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -52,7 +52,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { customerService, type CustomerAddress, type CreateAddressData } from "@/features/customers/services/customer-service";
+import { customerService } from "@/features/customers/services/customer-service";
+import type { CustomerAddress, CreateAddressData } from "@/features/customers/types";
 
 interface ManageAddressesDialogProps {
   open: boolean;
@@ -65,6 +66,12 @@ interface ManageAddressesDialogProps {
 export function ManageAddressesDialog({ open, onOpenChange, customerId, initialAddresses, onAddressesChange }: ManageAddressesDialogProps) {
   const { t } = useTranslation();
   const [addresses, setAddresses] = useState<CustomerAddress[]>(initialAddresses ?? []);
+
+  useEffect(() => {
+    if (open) {
+      setAddresses(initialAddresses ?? []);
+    }
+  }, [open, initialAddresses]);
 
   const updateAddresses = (updater: CustomerAddress[] | ((prev: CustomerAddress[]) => CustomerAddress[])) => {
     setAddresses((prev) => {

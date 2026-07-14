@@ -56,7 +56,7 @@ export function ExpensePage() {
         items = items.filter((item) =>
           filters.every((f) => {
             const val = String(item[f.field as keyof ExpenseEntry] ?? "").toLowerCase();
-            return val.includes(f.value.toLowerCase());
+            return f.value != null && val.includes(String(f.value).toLowerCase());
           })
         );
       }

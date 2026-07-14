@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Vector.Api.Data;
 using Vector.Api.Entities;
 using Vector.Api.Models.Product;
+using Vector.Api.Models.Stock;
 
 namespace Vector.Api.Services.Product
 {
@@ -30,6 +31,9 @@ namespace Vector.Api.Services.Product
                     Unit = p.Unit,
                     SalePrice = p.SalePrice,
                     IsActive = p.IsActive,
+                    StockQuantity = p.StockQuantity,
+                    AvgCost = p.AvgCost,
+                    LastPurchasePrice = p.LastPurchasePrice,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt
                 });
@@ -50,6 +54,9 @@ namespace Vector.Api.Services.Product
                     Unit = p.Unit,
                     SalePrice = p.SalePrice,
                     IsActive = p.IsActive,
+                    StockQuantity = p.StockQuantity,
+                    AvgCost = p.AvgCost,
+                    LastPurchasePrice = p.LastPurchasePrice,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
                     BomItems = p.ComponentBomItems.Where(b => b.DeletedAt == null).Select(b => new BomItemDto
@@ -97,6 +104,9 @@ namespace Vector.Api.Services.Product
                 Unit = entity.Unit,
                 SalePrice = entity.SalePrice,
                 IsActive = entity.IsActive,
+                StockQuantity = entity.StockQuantity,
+                AvgCost = entity.AvgCost,
+                LastPurchasePrice = entity.LastPurchasePrice,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt
             };
@@ -302,6 +312,159 @@ namespace Vector.Api.Services.Product
             _context.BomItems.Remove(bomItem);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        // ── Stock Operations ──
+
+        public IQueryable<StockMovementDto> GetStockMovementsQueryable(Guid organizationId, Guid productId)
+        {
+            return _context.StockMovements
+                .Where(m => m.OrganizationId == organizationId && m.ProductId == productId)
+                .OrderByDescending(m => m.CreatedAt)
+                .Select(m => new StockMovementDto
+                {
+                    Id = m.Id,
+                    ProductId = m.ProductId,
+                    ProductCode = m.Product!.Code,
+                    ProductName = m.Product.Name,
+                    Quantity = m.Quantity,
+                    UnitCost = m.UnitCost,
+                    TotalCost = m.TotalCost,
+                    Type = m.Type,
+                    Source = m.Source,
+                    Destination = m.Destination,
+                    Note = m.Note,
+                    CreatedAt = m.CreatedAt,
+                    CreatedByFullName = ""
+                });
+        }
+
+        public async Task<List<StockMovementDto>> GetStockMovementsAsync(Guid organizationId, Guid productId)
+        {
+            return await GetStockMovementsQueryable(organizationId, productId).ToListAsync();
+        }
+
+        public async Task<StockMovementDto> StockInAsync(Guid organizationId, Guid userId, Guid productId, StockInRequest request)
+        {
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p => p.OrganizationId == organizationId && p.Id == productId);
+
+            if (product == null)
+                throw new InvalidOperationException("Product not found.");
+
+            var oldQuantity = product.StockQuantity;
+            var oldAvgCost = product.AvgCost ?? 0;
+
+            // Weighted average cost calculation
+            if (request.UnitCost.HasValue)
+            {
+                var totalCost = (oldAvgCost * oldQuantity) + (request.UnitCost.Value * request.Quantity);
+                product.StockQuantity += request.Quantity;
+                product.AvgCost = product.StockQuantity > 0
+                    ? Math.Round(totalCost / product.StockQuantity, 4)
+                    : 0;
+                product.LastPurchasePrice = request.UnitCost;
+            }
+            else
+            {
+                product.StockQuantity += request.Quantity;
+            }
+
+            product.UpdatedById = userId;
+
+            var movement = new StockMovementEntity
+            {
+                Id = Guid.NewGuid(),
+                OrganizationId = organizationId,
+                ProductId = productId,
+                Quantity = request.Quantity,
+                UnitCost = request.UnitCost,
+                TotalCost = request.UnitCost.HasValue ? request.Quantity * request.UnitCost.Value : null,
+                Type = "In",
+                Source = request.Source,
+                Note = request.Note,
+                CreatedById = userId
+            };
+
+            _context.StockMovements.Add(movement);
+            await _context.SaveChangesAsync();
+
+            return (await GetStockMovementsQueryable(organizationId, productId)
+                .FirstAsync(m => m.Id == movement.Id))!;
+        }
+
+        public async Task<StockMovementDto> StockOutAsync(Guid organizationId, Guid userId, Guid productId, StockOutRequest request)
+        {
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p => p.OrganizationId == organizationId && p.Id == productId);
+
+            if (product == null)
+                throw new InvalidOperationException("Product not found.");
+
+            if (product.StockQuantity < request.Quantity)
+                throw new InvalidOperationException($"Insufficient stock. Available: {product.StockQuantity}");
+
+            product.StockQuantity -= request.Quantity;
+            product.UpdatedById = userId;
+
+            var unitCost = product.AvgCost;
+
+            var movement = new StockMovementEntity
+            {
+                Id = Guid.NewGuid(),
+                OrganizationId = organizationId,
+                ProductId = productId,
+                Quantity = request.Quantity,
+                UnitCost = unitCost,
+                TotalCost = unitCost.HasValue ? request.Quantity * unitCost.Value : null,
+                Type = "Out",
+                Destination = request.Destination,
+                Note = request.Note,
+                CreatedById = userId
+            };
+
+            _context.StockMovements.Add(movement);
+            await _context.SaveChangesAsync();
+
+            return (await GetStockMovementsQueryable(organizationId, productId)
+                .FirstAsync(m => m.Id == movement.Id))!;
+        }
+
+        public async Task<StockMovementDto> StockAdjustAsync(Guid organizationId, Guid userId, Guid productId, StockAdjustRequest request)
+        {
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p => p.OrganizationId == organizationId && p.Id == productId);
+
+            if (product == null)
+                throw new InvalidOperationException("Product not found.");
+
+            var diff = request.NewQuantity - product.StockQuantity;
+
+            product.StockQuantity = request.NewQuantity;
+            if (request.NewAvgCost.HasValue)
+            {
+                product.AvgCost = request.NewAvgCost;
+            }
+            product.UpdatedById = userId;
+
+            var movement = new StockMovementEntity
+            {
+                Id = Guid.NewGuid(),
+                OrganizationId = organizationId,
+                ProductId = productId,
+                Quantity = Math.Abs(diff),
+                UnitCost = product.AvgCost,
+                TotalCost = product.AvgCost.HasValue ? Math.Abs(diff) * product.AvgCost.Value : null,
+                Type = "Adjustment",
+                Note = request.Note,
+                CreatedById = userId
+            };
+
+            _context.StockMovements.Add(movement);
+            await _context.SaveChangesAsync();
+
+            return (await GetStockMovementsQueryable(organizationId, productId)
+                .FirstAsync(m => m.Id == movement.Id))!;
         }
 
         private async Task<bool> HasCircularReferenceAsync(Guid organizationId, Guid parentProductId, Guid componentProductId)

@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "@/hooks/use-document-title";
-import { customerService, type Customer } from "@/features/customers/services/customer-service";
-import { CreateCustomerDialog } from "@/features/customers/components/CreateCustomerDialog";
+import { customerService } from "@/features/customers/services/customer-service";
+import type { Customer } from "@/features/customers/types";
+import { CustomerDialog } from "@/features/customers/components/CustomerDialog";
 import { DataTable } from "@/components/data-table/DataTable";
-import type { Column, SortState } from "@/components/data-table/types";
+import type { Column, SortState, FilterValue } from "@/components/data-table/types";
 import { Button } from "@/components/ui/button";
-import { Plus, Phone, Mail, Hash, Building2, FileText, Landmark } from "lucide-react";
+import { Plus, Phone, Mail, Hash, Building2, FileText, Landmark, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 export function CustomersPage() {
@@ -16,10 +17,11 @@ export function CustomersPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [sort, setSort] = useState<SortState>({ sortBy: "createdAt", sortDirection: "desc" });
-  const [filters, setFilters] = useState<{ field: string; value: string }[]>([]);
+  const [filters, setFilters] = useState<FilterValue[]>([]);
   const abortRef = useRef<AbortController | null>(null);
 
   const loadCustomers = useCallback(async () => {
@@ -54,6 +56,26 @@ export function CustomersPage() {
     loadCustomers();
   }, [loadCustomers]);
 
+  function renderPhone(c: Customer) {
+    if (c.phone.length === 0) return "-";
+    return (
+      <span className="inline-flex items-center gap-1">
+        <Phone className="h-3 w-3 shrink-0" />
+        <span>{c.phone.join(", ")}</span>
+      </span>
+    );
+  }
+
+  function renderEmail(c: Customer) {
+    if (c.email.length === 0) return "-";
+    return (
+      <span className="inline-flex items-center gap-1">
+        <Mail className="h-3 w-3 shrink-0" />
+        <span>{c.email.join(", ")}</span>
+      </span>
+    );
+  }
+
   const columns: Column<Customer>[] = [
     {
       key: "code",
@@ -62,6 +84,7 @@ export function CustomersPage() {
       placeholder: "C-002",
       sortable: true,
       filterable: true,
+      filterType: "text",
       className: "font-mono text-xs",
       render: (c) => c.code,
     },
@@ -72,6 +95,7 @@ export function CustomersPage() {
       placeholder: t("ABC A.Ş."),
       sortable: true,
       filterable: true,
+      filterType: "text",
       className: "font-medium",
       render: (c) => c.companyName,
     },
@@ -82,6 +106,7 @@ export function CustomersPage() {
       placeholder: "1111111111",
       sortable: true,
       filterable: true,
+      filterType: "text",
       render: (c) => c.taxNumber || "-",
     },
     {
@@ -91,6 +116,7 @@ export function CustomersPage() {
       placeholder: "Bakırköy V.D",
       sortable: true,
       filterable: true,
+      filterType: "text",
       render: (c) => c.taxOffice || "-",
     },
     {
@@ -99,13 +125,8 @@ export function CustomersPage() {
       icon: <Phone className="h-4 w-4" />,
       placeholder: "555 444 ...",
       filterable: true,
-      render: (c) => c.phone.length > 0
-        ? (
-          <span className="inline-flex items-center gap-1">
-            <Phone className="h-3 w-3 shrink-0" />
-            <span>{c.phone.join(", ")}</span>
-          </span>
-        ) : "-",
+      filterType: "text",
+      render: (c) => renderPhone(c),
     },
     {
       key: "email",
@@ -113,13 +134,23 @@ export function CustomersPage() {
       icon: <Mail className="h-4 w-4" />,
       placeholder: "abc@abc.com",
       filterable: true,
-      render: (c) => c.email.length > 0
-        ? (
-          <span className="inline-flex items-center gap-1">
-            <Mail className="h-3 w-3 shrink-0" />
-            <span>{c.email.join(", ")}</span>
-          </span>
-        ) : "-",
+      filterType: "text",
+      render: (c) => renderEmail(c),
+    },
+    {
+      key: "actions",
+      label: "",
+      icon: null,
+      className: "w-[50px]",
+      render: (c) => (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setEditingCustomer(c)}
+        >
+          <Pencil className="h-4 w-4" />
+        </Button>
+      ),
     },
   ];
 
@@ -138,11 +169,20 @@ export function CustomersPage() {
         </Button>
       </div>
 
-      <CreateCustomerDialog
+      <CustomerDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onSuccess={loadCustomers}
       />
+
+      {editingCustomer && (
+        <CustomerDialog
+          open={!!editingCustomer}
+          onOpenChange={(v) => { if (!v) setEditingCustomer(null); }}
+          onSuccess={loadCustomers}
+          customerId={editingCustomer.id}
+        />
+      )}
 
       <DataTable
         columns={columns}

@@ -24,6 +24,13 @@ interface RecentTransactionsProps {
 export function RecentTransactions({ transactions }: RecentTransactionsProps) {
   const { t } = useTranslation();
 
+  function renderTrendIcon(tx: Transaction) {
+    if (tx.type === "income") {
+      return <TrendingUp className="h-3.5 w-3.5" />;
+    }
+    return <TrendingDown className="h-3.5 w-3.5" />;
+  }
+
   if (transactions.length === 0) {
     return (
       <div className="flex items-center justify-center h-[200px] text-muted-foreground text-sm">
@@ -58,7 +65,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
               </TableCell>
               <TableCell className="text-right">
                 <span className={`inline-flex items-center gap-1 text-sm font-medium ${tx.type === "income" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
-                  {tx.type === "income" ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
+                  {renderTrendIcon(tx)}
                   {tx.type === "income" ? "+" : "-"}{formatCurrency(tx.amount)}
                 </span>
               </TableCell>

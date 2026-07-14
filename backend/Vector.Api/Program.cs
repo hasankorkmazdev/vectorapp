@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 using System.Threading.RateLimiting;
 using Vector.Api.Data;
+using Vector.Api.Models.Stock;
 using Vector.Api.Services.Auth;
 using Vector.Api.Services.Infrastructure;
 using Vector.Api.Services.Organization;
@@ -32,6 +33,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     var modelBuilder = new ODataConventionModelBuilder();
     modelBuilder.EntitySet<CustomerListDto>("Customers");
     modelBuilder.EntitySet<ProductListDto>("Products");
+    modelBuilder.EntitySet<StockMovementDto>("StockMovements");
 
     var edmModel = modelBuilder.GetEdmModel();
 

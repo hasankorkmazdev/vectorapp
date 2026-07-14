@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -50,7 +50,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { customerService, type CustomerContact, type CreateContactData } from "@/features/customers/services/customer-service";
+import { customerService } from "@/features/customers/services/customer-service";
+import type { CustomerContact, CreateContactData } from "@/features/customers/types";
 
 interface ManageContactsDialogProps {
   open: boolean;
@@ -66,6 +67,12 @@ const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 export function ManageContactsDialog({ open, onOpenChange, customerId, initialContacts, onContactsChange }: ManageContactsDialogProps) {
   const { t } = useTranslation();
   const [contacts, setContacts] = useState<CustomerContact[]>(initialContacts ?? []);
+
+  useEffect(() => {
+    if (open) {
+      setContacts(initialContacts ?? []);
+    }
+  }, [open, initialContacts]);
 
   const updateContacts = (updater: CustomerContact[] | ((prev: CustomerContact[]) => CustomerContact[])) => {
     setContacts((prev) => {
