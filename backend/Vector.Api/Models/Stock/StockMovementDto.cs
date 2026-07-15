@@ -15,6 +15,8 @@ namespace Vector.Api.Models.Stock
         public string Type { get; set; } = string.Empty;
         public Guid? SupplierId { get; set; }
         public string? SupplierName { get; set; }
+        public Guid? WarehouseId { get; set; }
+        public string? WarehouseName { get; set; }
         public string? Destination { get; set; }
         public string? Note { get; set; }
         public DateTime CreatedAt { get; set; }

@@ -8,6 +8,7 @@ namespace Vector.Api.Models.Stock
         public decimal? UnitCost { get; set; }
         public string? Currency { get; set; }
         public Guid? SupplierId { get; set; }
+        public Guid? WarehouseId { get; set; }
         public string? Note { get; set; }
     }
 

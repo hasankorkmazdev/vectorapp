@@ -8,12 +8,15 @@ export interface Product {
   description: string | null;
   unit: string;
   salePrice: number | null;
+  sellingCurrency: string;
   isActive: boolean;
   stockQuantity: number;
   avgCost: number | null;
   lastPurchasePrice: number | null;
   createdAt: string;
   updatedAt: string | null;
+  groupId: string | null;
+  groupName: string | null;
   bomItems: BomItem[];
 }
 
@@ -23,27 +26,36 @@ export interface ProductListItem {
   name: string;
   unit: string;
   salePrice: number | null;
+  sellingCurrency: string;
   isActive: boolean;
   stockQuantity: number;
   avgCost: number | null;
   lastPurchasePrice: number | null;
   createdAt: string;
   updatedAt: string | null;
+  groupId: string | null;
+  groupName: string | null;
 }
 
 export interface CreateProductData {
+  code: string;
   name: string;
   description?: string;
   unit: string;
   salePrice?: number;
+  sellingCurrency: string;
+  groupId?: string;
 }
 
 export interface UpdateProductData {
+  code: string;
   name: string;
   description?: string;
   unit: string;
   salePrice?: number;
+  sellingCurrency: string;
   isActive: boolean;
+  groupId?: string;
 }
 
 export interface BomItem {

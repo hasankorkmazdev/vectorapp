@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { productService, type ProductListItem } from "@/features/products/services/product-service";
+import { productGroupService, type ProductGroup } from "@/features/products/services/product-group-service";
 import { CreateProductDialog } from "@/features/products/components/CreateProductDialog";
 import { StockInDialog } from "@/features/stock/components/StockInDialog";
 import { StockOutDialog } from "@/features/stock/components/StockOutDialog";
@@ -10,13 +11,14 @@ import { StockMovementsPanel } from "@/features/stock/components/StockMovementsP
 import { DataTable } from "@/components/data-table/DataTable";
 import type { Column, SortState, FilterValue } from "@/components/data-table/types";
 import { Button } from "@/components/ui/button";
-import { Plus, Package, Hash, Ruler, DollarSign, ArrowDownToLine, ArrowUpFromLine, History, Warehouse, Coins, ShoppingBag } from "lucide-react";
+import { Plus, Package, Hash, Ruler, ArrowDownToLine, ArrowUpFromLine, History, Warehouse, FolderTree, Coins, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
 export function StocksPage() {
   useDocumentTitle("sidebar.stocksList");
   const { t } = useTranslation();
   const [products, setProducts] = useState<ProductListItem[]>([]);
+  const [groups, setGroups] = useState<ProductGroup[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -62,6 +64,15 @@ export function StocksPage() {
     loadProducts();
   }, [loadProducts]);
 
+  useEffect(() => {
+    productGroupService.getAll().then((res) => {
+      const body = res.data;
+      setGroups(Array.isArray(body) ? body : body?.value ?? []);
+    });
+  }, []);
+
+  const groupOptions = groups.map((g) => ({ label: g.name, value: g.name }));
+
   const unitOptions = [
     { label: "Adet", value: "adet" },
     { label: "Kg", value: "kg" },
@@ -75,10 +86,16 @@ export function StocksPage() {
     { label: "Çift", value: "çift" },
   ];
 
-  const fmtCurrency = (v: number | null) =>
-    v != null
-      ? new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(v)
-      : "-";
+  const fmtCurrency = (v: number | null, currency?: string | null) => {
+    if (v == null) return "-";
+    const cur = currency || "TRY";
+    const formatted = new Intl.NumberFormat("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
+    return (
+      <span>
+        <span className="font-semibold">{cur}</span>{" "}{formatted}
+      </span>
+    );
+  };
 
   const renderStockActions = (p: ProductListItem) => (
     <div className="flex items-center gap-1">
@@ -116,17 +133,19 @@ export function StocksPage() {
       sortable: true,
       filterable: true,
       filterType: "text",
-      className: "font-medium",
+      className: "font-medium whitespace-nowrap",
       render: (p) => p.name,
     },
     {
-      key: "stockQuantity",
-      label: t("stock.stockQuantity"),
-      icon: <Warehouse className="h-4 w-4" />,
-      sortable: true,
+      key: "groupName",
+      label: t("products.group"),
+      icon: <FolderTree className="h-4 w-4" />,
+      sortable: false,
       filterable: true,
-      filterType: "number",
-      render: (p) => p.stockQuantity,
+      filterType: "select",
+      filterOptions: groupOptions,
+      className: "whitespace-nowrap",
+      render: (p) => p.groupName ?? "-",
     },
     {
       key: "avgCost",
@@ -135,7 +154,7 @@ export function StocksPage() {
       sortable: true,
       filterable: true,
       filterType: "number",
-      render: (p) => fmtCurrency(p.avgCost),
+      render: (p) => fmtCurrency(p.avgCost, p.sellingCurrency),
     },
     {
       key: "lastPurchasePrice",
@@ -144,16 +163,16 @@ export function StocksPage() {
       sortable: true,
       filterable: true,
       filterType: "number",
-      render: (p) => fmtCurrency(p.lastPurchasePrice),
+      render: (p) => fmtCurrency(p.lastPurchasePrice, p.sellingCurrency),
     },
     {
       key: "salePrice",
       label: t("products.salePrice"),
-      icon: <DollarSign className="h-4 w-4" />,
+      icon: "",
       sortable: true,
       filterable: true,
       filterType: "number",
-      render: (p) => fmtCurrency(p.salePrice),
+      render: (p) => fmtCurrency(p.salePrice, p.sellingCurrency),
     },
     {
       key: "unit",

@@ -2,13 +2,14 @@
 
 ## Monorepo layout
 
-- `backend/Vector.Api.sln` — .NET 10 ASP.NET Core Web API (C#, EF Core, Npgsql PostgreSQL)
-- `frontend/` — Vite + React 19 + TypeScript + Tailwind CSS v4 + shadcn/ui
+- `Vector.sln` — Solution root (VS 2022+)
+  - `Vector.Api` — .NET 10 ASP.NET Core Web API (C#, EF Core, Npgsql PostgreSQL)
+  - `Vector.UI` — Vite + React 19 + TypeScript + Tailwind CSS v4 + shadcn/ui
 
 ## Backend commands
 
 ```powershell
-# Build (from backend/)
+# Build (from repo root)
 dotnet build
 
 # DB is rebuilt via EnsureCreated() at startup — no migration workflow.

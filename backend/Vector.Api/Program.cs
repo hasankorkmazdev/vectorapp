@@ -12,7 +12,9 @@ using Vector.Api.Services.Infrastructure;
 using Vector.Api.Services.Organization;
 using Vector.Api.Services.Customer;
 using Vector.Api.Services.Product;
+using Vector.Api.Services.ProductGroup;
 using Vector.Api.Services.Supplier;
+using Vector.Api.Services.Warehouse;
 using Vector.Api.Models.Common;
 using Vector.Api.Models.Customer;
 using Vector.Api.Models.Product;
@@ -72,7 +74,9 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IOrganizationService, OrganizationService>();
     builder.Services.AddScoped<ICustomerService, CustomerService>();
     builder.Services.AddScoped<IProductService, ProductService>();
+    builder.Services.AddScoped<IProductGroupService, ProductGroupService>();
     builder.Services.AddScoped<ISupplierService, SupplierService>();
+    builder.Services.AddScoped<IWarehouseService, WarehouseService>();
     builder.Services.AddHttpClient();
 
     builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();

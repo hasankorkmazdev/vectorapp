@@ -14,7 +14,7 @@ export function CreateProductPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (values: { name: string; description?: string; unit: string; salePrice?: string }) => {
+  const onSubmit = async (values: { name: string; description?: string; unit: string; salePrice?: string; sellingCurrency: string }) => {
     setLoading(true);
     try {
       await productService.create({
@@ -22,6 +22,7 @@ export function CreateProductPage() {
         description: values.description || undefined,
         unit: values.unit,
         salePrice: values.salePrice ? parseFloat(values.salePrice) : undefined,
+        sellingCurrency: values.sellingCurrency,
       });
       toast.success(t("common.success"), {
         description: t("products.createSuccess"),

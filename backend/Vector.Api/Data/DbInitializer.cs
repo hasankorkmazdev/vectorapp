@@ -16,6 +16,11 @@ namespace Vector.Api.Data
             SeedOrganizations(context);
             SeedOrganizationMembers(context);
             SeedCustomers(context);
+            SeedWarehouses(context);
+            SeedProductGroups(context);
+            SeedSuppliers(context);
+            SeedProducts(context);
+            SeedStockMovements(context);
         }
 
         private static void SeedPermissions(ApplicationDbContext context)
@@ -244,6 +249,282 @@ namespace Vector.Api.Data
             };
 
             context.AddOrUpdate(contacts);
+            context.SaveChanges();
+        }
+
+        private static void SeedWarehouses(ApplicationDbContext context)
+        {
+            var warehouses = new WarehouseEntity[]
+            {
+                new()
+                {
+                    Id = SeedConstants.DefaultWarehouseId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "WH001",
+                    Name = "Ana Depo",
+                    Location = "Konya",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                }
+            };
+
+            context.AddOrUpdate(warehouses);
+            context.SaveChanges();
+        }
+
+        private static void SeedProductGroups(ApplicationDbContext context)
+        {
+            var groups = new ProductGroupEntity[]
+            {
+                new()
+                {
+                    Id = SeedConstants.ProductGroupOilId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Name = "Yağlar",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductGroupFilterId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Name = "Filtreler",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductGroupBearingId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Name = "Rulmanlar",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductGroupHydraulicId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Name = "Hidrolik Ekipmanlar",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductGroupElectricalId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Name = "Elektrik Ekipmanları",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                }
+            };
+
+            context.AddOrUpdate(groups);
+            context.SaveChanges();
+        }
+
+        private static void SeedSuppliers(ApplicationDbContext context)
+        {
+            var suppliers = new SupplierEntity[]
+            {
+                new()
+                {
+                    Id = SeedConstants.Supplier1Id,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "SUP001",
+                    Name = "Konya Yağ Sanayi",
+                    Phone = "(0332) 500 00 00",
+                    Email = "info@konyayag.com",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.Supplier2Id,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "SUP002",
+                    Name = "Anadolu Filtre",
+                    Phone = "(0312) 400 00 00",
+                    Email = "info@anadolufiltre.com",
+                    CreatedAt = DateTime.UtcNow
+                }
+            };
+
+            context.AddOrUpdate(suppliers);
+            context.SaveChanges();
+        }
+
+        private static void SeedProducts(ApplicationDbContext context)
+        {
+            var products = new ProductEntity[]
+            {
+                new()
+                {
+                    Id = SeedConstants.ProductOilId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "PRD001",
+                    Name = "Hidrolik Yağ 68",
+                    Description = "ISO VG 68 hidrolik sistem yağı",
+                    Unit = "Litre",
+                    SalePrice = 450,
+                    SellingCurrency = "TRY",
+                    StockQuantity = 120,
+                    AvgCost = 320,
+                    LastPurchasePrice = 320,
+                    GroupId = SeedConstants.ProductGroupOilId,
+                    IsActive = true,
+                    CreatedById = SeedConstants.OrganizationAdminUserId,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductFilterId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "PRD002",
+                    Name = "Yağ Filtresi - PF2056",
+                    Description = "Gelişmiş filtreleme performansı",
+                    Unit = "Adet",
+                    SalePrice = 280,
+                    SellingCurrency = "TRY",
+                    StockQuantity = 0,
+                    GroupId = SeedConstants.ProductGroupFilterId,
+                    IsActive = true,
+                    CreatedById = SeedConstants.OrganizationAdminUserId,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductBearingId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "PRD003",
+                    Name = "Rulman 6205-2RS",
+                    Description = "Mühürlü bilyalı rulman",
+                    Unit = "Adet",
+                    SalePrice = 12,
+                    SellingCurrency = "EUR",
+                    StockQuantity = 50,
+                    AvgCost = 210,
+                    LastPurchasePrice = 210,
+                    GroupId = SeedConstants.ProductGroupBearingId,
+                    IsActive = true,
+                    CreatedById = SeedConstants.OrganizationAdminUserId,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductHydraulicHoseId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "PRD004",
+                    Name = "Hidrolik Hortum 1/2\"",
+                    Description = "Çelik örgü reinforced hidrolik hortum",
+                    Unit = "Metre",
+                    SalePrice = 600,
+                    SellingCurrency = "TRY",
+                    StockQuantity = 0,
+                    GroupId = SeedConstants.ProductGroupHydraulicId,
+                    IsActive = true,
+                    CreatedById = SeedConstants.OrganizationAdminUserId,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductMotorId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "PRD005",
+                    Name = "Elektrik Motoru 2.2kW",
+                    Description = "3 faz asenkron motor",
+                    Unit = "Adet",
+                    SalePrice = 280,
+                    SellingCurrency = "USD",
+                    StockQuantity = 5,
+                    AvgCost = 6200,
+                    LastPurchasePrice = 6200,
+                    GroupId = SeedConstants.ProductGroupElectricalId,
+                    IsActive = true,
+                    CreatedById = SeedConstants.OrganizationAdminUserId,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductCableId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "PRD006",
+                    Name = "NYA Kablo 4x2.5mm²",
+                    Description = "Bakır iletkenli kablo",
+                    Unit = "Metre",
+                    SalePrice = 85,
+                    SellingCurrency = "TRY",
+                    StockQuantity = 0,
+                    GroupId = SeedConstants.ProductGroupElectricalId,
+                    IsActive = true,
+                    CreatedById = SeedConstants.OrganizationAdminUserId,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductSealKitId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "PRD007",
+                    Name = "Conta Seti - SK100",
+                    Description = "Hidrolik silindir conta takımı",
+                    Unit = "Set",
+                    SalePrice = 1500,
+                    SellingCurrency = "TRY",
+                    StockQuantity = 15,
+                    AvgCost = 950,
+                    LastPurchasePrice = 950,
+                    GroupId = SeedConstants.ProductGroupHydraulicId,
+                    IsActive = true,
+                    CreatedById = SeedConstants.OrganizationAdminUserId,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.ProductGreaseId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "PRD008",
+                    Name = "Gres Yağı EP2",
+                    Description = "Genel amaçlı EP gres yağı",
+                    Unit = "Kg",
+                    SalePrice = 250,
+                    SellingCurrency = "TRY",
+                    StockQuantity = 0,
+                    GroupId = SeedConstants.ProductGroupOilId,
+                    IsActive = true,
+                    CreatedById = SeedConstants.OrganizationAdminUserId,
+                    CreatedAt = DateTime.UtcNow
+                }
+            };
+
+            context.AddOrUpdate(products);
+            context.SaveChanges();
+        }
+
+        private static void SeedStockMovements(ApplicationDbContext context)
+        {
+            var stockProducts = new (Guid ProductId, decimal Quantity, decimal UnitCost)[]
+            {
+                (SeedConstants.ProductOilId, 120, 320),
+                (SeedConstants.ProductBearingId, 50, 210),
+                (SeedConstants.ProductMotorId, 5, 6200),
+                (SeedConstants.ProductSealKitId, 15, 950),
+            };
+
+            var movements = stockProducts.Select(sp => new StockMovementEntity
+            {
+                Id = Guid.NewGuid(),
+                OrganizationId = SeedConstants.OrganizationKBB,
+                ProductId = sp.ProductId,
+                Quantity = sp.Quantity,
+                UnitCost = sp.UnitCost,
+                Currency = "TRY",
+                TotalCost = sp.Quantity * sp.UnitCost,
+                Type = "In",
+                WarehouseId = SeedConstants.DefaultWarehouseId,
+                Note = "Initial seed stock",
+                CreatedById = SeedConstants.OrganizationAdminUserId,
+                CreatedAt = DateTime.UtcNow
+            }).ToArray();
+
+            context.AddOrUpdate(movements);
             context.SaveChanges();
         }
     }

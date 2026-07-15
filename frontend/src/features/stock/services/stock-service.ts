@@ -12,6 +12,8 @@ export interface StockMovement {
   type: "In" | "Out" | "Adjustment";
   supplierId: string | null;
   supplierName: string | null;
+  warehouseId: string | null;
+  warehouseName: string | null;
   destination: string | null;
   note: string | null;
   createdAt: string;
@@ -23,6 +25,7 @@ export interface StockInData {
   unitCost?: number;
   currency?: string;
   supplierId?: string;
+  warehouseId?: string;
   note?: string;
 }
 
@@ -50,4 +53,15 @@ export const stockService = {
 
   stockAdjust: (productId: string, data: StockAdjustData) =>
     api.post<{ data: StockMovement }>(`/product/${productId}/stock-adjust`, data),
+
+  getWarehouses: (signal?: AbortSignal) =>
+    api.get<{ value: Warehouse[] }>("/warehouse?$orderby=name&$top=500", { signal }),
 };
+
+export interface Warehouse {
+  id: string;
+  code: string;
+  name: string;
+  location: string | null;
+  isActive: boolean;
+}

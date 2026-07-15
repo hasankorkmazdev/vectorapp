@@ -35,6 +35,8 @@ namespace Vector.Api.Data
         public DbSet<BomItemEntity> BomItems => Set<BomItemEntity>();
         public DbSet<StockMovementEntity> StockMovements => Set<StockMovementEntity>();
         public DbSet<SupplierEntity> Suppliers => Set<SupplierEntity>();
+        public DbSet<WarehouseEntity> Warehouses => Set<WarehouseEntity>();
+        public DbSet<ProductGroupEntity> ProductGroups => Set<ProductGroupEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,6 +58,8 @@ namespace Vector.Api.Data
             modelBuilder.Entity<BomItemEntity>().ToTable("BomItems");
             modelBuilder.Entity<StockMovementEntity>().ToTable("StockMovements");
             modelBuilder.Entity<SupplierEntity>().ToTable("Suppliers");
+            modelBuilder.Entity<WarehouseEntity>().ToTable("Warehouses");
+            modelBuilder.Entity<ProductGroupEntity>().ToTable("ProductGroups");
 
             // Composite keys
             modelBuilder.Entity<RolePermissionEntity>()
@@ -71,6 +75,8 @@ namespace Vector.Api.Data
             modelBuilder.Entity<ProductEntity>().HasQueryFilter(p => p.DeletedAt == null);
             modelBuilder.Entity<BomItemEntity>().HasQueryFilter(b => b.DeletedAt == null);
             modelBuilder.Entity<SupplierEntity>().HasQueryFilter(s => s.DeletedAt == null);
+            modelBuilder.Entity<WarehouseEntity>().HasQueryFilter(w => w.DeletedAt == null);
+            modelBuilder.Entity<ProductGroupEntity>().HasQueryFilter(g => g.DeletedAt == null);
 
             // Relations
             modelBuilder.Entity<OrganizationMemberEntity>()
@@ -170,6 +176,20 @@ namespace Vector.Api.Data
                 .WithMany()
                 .HasForeignKey(m => m.SupplierId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<StockMovementEntity>()
+                .HasOne(m => m.Warehouse)
+                .WithMany()
+                .HasForeignKey(m => m.WarehouseId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Warehouse indexes
+            modelBuilder.Entity<WarehouseEntity>()
+                .HasIndex(w => w.OrganizationId);
+
+            modelBuilder.Entity<WarehouseEntity>()
+                .HasIndex(w => new { w.OrganizationId, w.Code })
+                .IsUnique();
 
             // AutoIncludes for User roles & permissions
             modelBuilder.Entity<RoleEntity>()

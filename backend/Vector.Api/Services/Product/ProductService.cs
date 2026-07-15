@@ -30,18 +30,22 @@ namespace Vector.Api.Services.Product
                     Name = p.Name,
                     Unit = p.Unit,
                     SalePrice = p.SalePrice,
+                    SellingCurrency = p.SellingCurrency,
                     IsActive = p.IsActive,
                     StockQuantity = p.StockQuantity,
                     AvgCost = p.AvgCost,
                     LastPurchasePrice = p.LastPurchasePrice,
                     CreatedAt = p.CreatedAt,
-                    UpdatedAt = p.UpdatedAt
+                    UpdatedAt = p.UpdatedAt,
+                    GroupId = p.GroupId,
+                    GroupName = p.Group != null ? p.Group.Name : null
                 });
         }
 
         public async Task<ProductDto?> GetByIdAsync(Guid organizationId, Guid id)
         {
             return await _context.Products
+                .Include(p => p.Group)
                 .Include(p => p.ComponentBomItems.Where(b => b.DeletedAt == null))
                     .ThenInclude(b => b.ComponentProduct)
                 .Where(p => p.OrganizationId == organizationId && p.Id == id)
@@ -53,12 +57,15 @@ namespace Vector.Api.Services.Product
                     Description = p.Description,
                     Unit = p.Unit,
                     SalePrice = p.SalePrice,
+                    SellingCurrency = p.SellingCurrency,
                     IsActive = p.IsActive,
                     StockQuantity = p.StockQuantity,
                     AvgCost = p.AvgCost,
                     LastPurchasePrice = p.LastPurchasePrice,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
+                    GroupId = p.GroupId,
+                    GroupName = p.Group != null ? p.Group.Name : null,
                     BomItems = p.ComponentBomItems.Where(b => b.DeletedAt == null).Select(b => new BomItemDto
                     {
                         Id = b.Id,
@@ -76,19 +83,17 @@ namespace Vector.Api.Services.Product
 
         public async Task<ProductDto> CreateAsync(Guid organizationId, Guid userId, CreateProductRequest request)
         {
-            var count = await _context.Products
-                .IgnoreQueryFilters()
-                .CountAsync(p => p.OrganizationId == organizationId);
-
             var entity = new ProductEntity
             {
                 Id = Guid.NewGuid(),
                 OrganizationId = organizationId,
-                Code = $"PRD{(count + 1):D5}",
+                Code = request.Code,
                 Name = request.Name,
                 Description = request.Description,
                 Unit = request.Unit,
                 SalePrice = request.SalePrice,
+                SellingCurrency = request.SellingCurrency,
+                GroupId = request.GroupId,
                 CreatedById = userId
             };
 
@@ -103,12 +108,14 @@ namespace Vector.Api.Services.Product
                 Description = entity.Description,
                 Unit = entity.Unit,
                 SalePrice = entity.SalePrice,
+                SellingCurrency = entity.SellingCurrency,
                 IsActive = entity.IsActive,
                 StockQuantity = entity.StockQuantity,
                 AvgCost = entity.AvgCost,
                 LastPurchasePrice = entity.LastPurchasePrice,
                 CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt
+                UpdatedAt = entity.UpdatedAt,
+                GroupId = entity.GroupId
             };
         }
 
@@ -123,7 +130,9 @@ namespace Vector.Api.Services.Product
             entity.Description = request.Description;
             entity.Unit = request.Unit;
             entity.SalePrice = request.SalePrice;
+            entity.SellingCurrency = request.SellingCurrency;
             entity.IsActive = request.IsActive;
+            entity.GroupId = request.GroupId;
             entity.UpdatedById = userId;
 
             await _context.SaveChangesAsync();
@@ -334,6 +343,8 @@ namespace Vector.Api.Services.Product
                     Type = m.Type,
                     SupplierId = m.SupplierId,
                     SupplierName = m.Supplier != null ? m.Supplier.Name : null,
+                    WarehouseId = m.WarehouseId,
+                    WarehouseName = m.Warehouse != null ? m.Warehouse.Name : null,
                     Destination = m.Destination,
                     Note = m.Note,
                     CreatedAt = m.CreatedAt,
@@ -385,6 +396,7 @@ namespace Vector.Api.Services.Product
                 Currency = request.Currency,
                 Type = "In",
                 SupplierId = request.SupplierId,
+                WarehouseId = request.WarehouseId,
                 Note = request.Note,
                 CreatedById = userId
             };

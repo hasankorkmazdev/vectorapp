@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.6.11822.322 stable
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vector.Api", "Vector.Api\Vector.Api.csproj", "{F5A630D6-2340-4A2B-58B4-EE03789D1B9F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vector.Api", "backend\Vector.Api\Vector.Api.csproj", "{F5A630D6-2340-4A2B-58B4-EE03789D1B9F}"
+EndProject
+Project("{54A90642-561A-45D1-A2BA-D6DAAFC91A40}") = "Vector.UI", "frontend\WebUI.esproj", "{A53679DF-0910-4CB0-A54F-F46136662EBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F5A630D6-2340-4A2B-58B4-EE03789D1B9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5A630D6-2340-4A2B-58B4-EE03789D1B9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5A630D6-2340-4A2B-58B4-EE03789D1B9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A53679DF-0910-4CB0-A54F-F46136662EBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A53679DF-0910-4CB0-A54F-F46136662EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A53679DF-0910-4CB0-A54F-F46136662EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A53679DF-0910-4CB0-A54F-F46136662EBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

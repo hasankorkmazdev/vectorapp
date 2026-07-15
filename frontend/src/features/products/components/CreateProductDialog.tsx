@@ -22,14 +22,17 @@ export function CreateProductDialog({ open, onOpenChange, onSuccess }: CreatePro
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (values: { name: string; description?: string; unit: string; salePrice?: string }) => {
+  const onSubmit = async (values: { code: string; name: string; description?: string; unit: string; salePrice?: string; sellingCurrency: string; groupId?: string }) => {
     setLoading(true);
     try {
       await productService.create({
+        code: values.code,
         name: values.name,
         description: values.description || undefined,
         unit: values.unit,
         salePrice: values.salePrice ? parseFloat(values.salePrice) : undefined,
+        sellingCurrency: values.sellingCurrency,
+        groupId: values.groupId || undefined,
       });
       toast.success(t("common.success"), {
         description: t("products.createSuccess"),

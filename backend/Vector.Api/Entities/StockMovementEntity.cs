@@ -13,6 +13,7 @@ namespace Vector.Api.Entities
         public decimal? TotalCost { get; set; }
         public string Type { get; set; } = string.Empty;
         public Guid? SupplierId { get; set; }
+        public Guid? WarehouseId { get; set; }
         public string? Destination { get; set; }
         public string? Note { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -20,5 +21,6 @@ namespace Vector.Api.Entities
 
         public ProductEntity? Product { get; set; }
         public SupplierEntity? Supplier { get; set; }
+        public WarehouseEntity? Warehouse { get; set; }
     }
 }

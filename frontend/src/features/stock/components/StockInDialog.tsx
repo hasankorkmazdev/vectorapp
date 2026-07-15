@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Check, X } from "lucide-react";
-import { stockService } from "@/features/stock/services/stock-service";
+import { stockService, type Warehouse } from "@/features/stock/services/stock-service";
 import { supplierService } from "@/features/suppliers/services/supplier-service";
 import type { Supplier } from "@/features/suppliers/types";
 
@@ -44,17 +44,22 @@ interface Props {
 
 const formSchema = z.object({
   unitCost: z.number().min(0).optional(),
+  currency: z.string().min(1),
+  warehouseId: z.string().min(1),
   supplierId: z.string().optional(),
   note: z.string().max(500).optional(),
 });
 
+const SELLING_CURRENCIES = ["TRY", "USD", "EUR"];
+
 export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Props) {
   const { t } = useTranslation();
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { unitCost: undefined, supplierId: undefined, note: "" },
+    defaultValues: { unitCost: undefined, currency: "TRY", warehouseId: "", supplierId: undefined, note: "" },
   });
 
   const [quantityStr, setQuantityStr] = useState("1");
@@ -64,6 +69,9 @@ export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Prop
     const controller = new AbortController();
     supplierService.getAll(controller.signal)
       .then(setSuppliers)
+      .catch(() => {});
+    stockService.getWarehouses(controller.signal)
+      .then((res) => setWarehouses(res.data.value ?? []))
       .catch(() => {});
     return () => controller.abort();
   }, [open]);
@@ -75,6 +83,8 @@ export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Prop
       await stockService.stockIn(productId, {
         quantity: qty,
         unitCost: values.unitCost || undefined,
+        currency: values.currency,
+        warehouseId: values.warehouseId,
         supplierId: values.supplierId || undefined,
         note: values.note || undefined,
       });
@@ -93,7 +103,7 @@ export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Prop
 
   const resetForm = () => {
     setQuantityStr("1");
-    form.reset({ unitCost: undefined, supplierId: undefined, note: "" });
+    form.reset({ unitCost: undefined, currency: "TRY", warehouseId: "", supplierId: undefined, note: "" });
     onOpenChange(false);
   };
 
@@ -116,16 +126,67 @@ export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Prop
               />
               <p className="text-[0.8rem] text-muted-foreground">{t("stock.quantityDescription")}</p>
             </div>
+            <div className="grid grid-cols-4 gap-4">
+              <div className="col-span-3">
+                <FormField
+                  control={form.control}
+                  name="unitCost"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("stock.unitCost")}</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.0001" value={field.value ?? ""} onChange={(e) => field.onChange(toOptionalNumber(e))} />
+                      </FormControl>
+                      <FormDescription>{t("stock.unitCostDescription")}</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="currency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>&nbsp;</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SELLING_CURRENCIES.map((currency) => (
+                          <SelectItem key={currency} value={currency}>
+                            {currency}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
-              name="unitCost"
+              name="warehouseId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("stock.unitCost")}</FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.0001" value={field.value ?? ""} onChange={(e) => field.onChange(toOptionalNumber(e))} />
-                  </FormControl>
-                  <FormDescription>{t("stock.unitCostDescription")}</FormDescription>
+                  <FormLabel>{t("stock.warehouse")}</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("stock.warehousePlaceholder")} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {warehouses.map((w) => (
+                        <SelectItem key={w.id} value={w.id}>
+                          {w.code} - {w.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>{t("stock.warehouseDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

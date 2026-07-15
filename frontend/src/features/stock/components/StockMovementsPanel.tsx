@@ -91,6 +91,7 @@ export function StockMovementsPanel({ productId, open, onOpenChange }: Props) {
                   {m.unitCost != null && <span>{t("stock.unitCost")}: {fmtCurrency(m.unitCost)} {m.currency && `(${m.currency})`}</span>}
                   {m.totalCost != null && <span>{t("stock.totalCost")}: {fmtCurrency(m.totalCost)}</span>}
                   {m.supplierName && <span>{t("stock.supplier")}: {m.supplierName}</span>}
+                  {m.warehouseName && <span>{t("stock.warehouse")}: {m.warehouseName}</span>}
                   {m.destination && <span>{t("stock.destination")}: {m.destination}</span>}
                 </div>
                 {m.note && <p className="text-muted-foreground italic">{m.note}</p>}

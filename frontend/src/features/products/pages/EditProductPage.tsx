@@ -16,10 +16,13 @@ export function EditProductPage() {
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [initialValues, setInitialValues] = useState<{
+    code: string;
     name: string;
     description?: string;
     unit: string;
     salePrice?: string;
+    sellingCurrency: string;
+    groupId?: string;
   } | null>(null);
 
   useEffect(() => {
@@ -29,10 +32,13 @@ export function EditProductPage() {
         const res = await productService.getById(id);
         const product = res.data.data;
         setInitialValues({
+          code: product.code,
           name: product.name,
           description: product.description ?? "",
           unit: product.unit,
           salePrice: product.salePrice?.toString() ?? "",
+          sellingCurrency: product.sellingCurrency,
+          groupId: product.groupId ?? "",
         });
       } catch (error: any) {
         toast.error(t("common.error"), {
@@ -45,16 +51,19 @@ export function EditProductPage() {
     })();
   }, [id, navigate, t]);
 
-  const onSubmit = async (values: { name: string; description?: string; unit: string; salePrice?: string }) => {
+  const onSubmit = async (values: { code: string; name: string; description?: string; unit: string; salePrice?: string; sellingCurrency: string; groupId?: string }) => {
     if (!id) return;
     setLoading(true);
     try {
       await productService.update(id, {
+        code: values.code,
         name: values.name,
         description: values.description || undefined,
         unit: values.unit,
         salePrice: values.salePrice ? parseFloat(values.salePrice) : undefined,
+        sellingCurrency: values.sellingCurrency,
         isActive: true,
+        groupId: values.groupId || undefined,
       });
       toast.success(t("common.success"), {
         description: t("products.updateSuccess"),
