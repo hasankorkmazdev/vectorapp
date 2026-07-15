@@ -27,7 +27,7 @@ export function StocksPage() {
   const abortRef = useRef<AbortController | null>(null);
 
   const [stockInProductId, setStockInProductId] = useState<string | null>(null);
-  const [stockOutProductId, setStockOutProductId] = useState<string | null>(null);
+  const [stockOutProduct, setStockOutProduct] = useState<{ id: string; unit: string } | null>(null);
   const [movementsProductId, setMovementsProductId] = useState<string | null>(null);
 
   const loadProducts = useCallback(async () => {
@@ -71,6 +71,8 @@ export function StocksPage() {
     { label: "m³", value: "m3" },
     { label: "Paket", value: "paket" },
     { label: "Kutu", value: "kutu" },
+    { label: "Takım", value: "takım" },
+    { label: "Çift", value: "çift" },
   ];
 
   const fmtCurrency = (v: number | null) =>
@@ -83,7 +85,7 @@ export function StocksPage() {
       <Button variant="ghost" size="icon" title={t("stock.stockIn")} onClick={() => setStockInProductId(p.id)}>
         <ArrowDownToLine className="h-4 w-4 text-green-600" />
       </Button>
-      <Button variant="ghost" size="icon" title={t("stock.stockOut")} onClick={() => setStockOutProductId(p.id)}>
+      <Button variant="ghost" size="icon" title={t("stock.stockOut")} onClick={() => setStockOutProduct({ id: p.id, unit: p.unit })}>
         <ArrowUpFromLine className="h-4 w-4 text-red-600" />
       </Button>
       <Button variant="ghost" size="icon" title={t("stock.movements")} onClick={() => setMovementsProductId(p.id)}>
@@ -201,11 +203,12 @@ export function StocksPage() {
         />
       )}
 
-      {stockOutProductId && (
+      {stockOutProduct && (
         <StockOutDialog
-          productId={stockOutProductId}
-          open={!!stockOutProductId}
-          onOpenChange={() => setStockOutProductId(null)}
+          productId={stockOutProduct.id}
+          unit={stockOutProduct.unit}
+          open={!!stockOutProduct}
+          onOpenChange={() => setStockOutProduct(null)}
           onSuccess={loadProducts}
         />
       )}

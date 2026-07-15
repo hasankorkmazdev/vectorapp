@@ -34,6 +34,7 @@ namespace Vector.Api.Data
         public DbSet<ProductEntity> Products => Set<ProductEntity>();
         public DbSet<BomItemEntity> BomItems => Set<BomItemEntity>();
         public DbSet<StockMovementEntity> StockMovements => Set<StockMovementEntity>();
+        public DbSet<SupplierEntity> Suppliers => Set<SupplierEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +55,7 @@ namespace Vector.Api.Data
             modelBuilder.Entity<ProductEntity>().ToTable("Products");
             modelBuilder.Entity<BomItemEntity>().ToTable("BomItems");
             modelBuilder.Entity<StockMovementEntity>().ToTable("StockMovements");
+            modelBuilder.Entity<SupplierEntity>().ToTable("Suppliers");
 
             // Composite keys
             modelBuilder.Entity<RolePermissionEntity>()
@@ -68,6 +70,7 @@ namespace Vector.Api.Data
             modelBuilder.Entity<CustomerAddressEntity>().HasQueryFilter(a => a.DeletedAt == null);
             modelBuilder.Entity<ProductEntity>().HasQueryFilter(p => p.DeletedAt == null);
             modelBuilder.Entity<BomItemEntity>().HasQueryFilter(b => b.DeletedAt == null);
+            modelBuilder.Entity<SupplierEntity>().HasQueryFilter(s => s.DeletedAt == null);
 
             // Relations
             modelBuilder.Entity<OrganizationMemberEntity>()
@@ -141,6 +144,14 @@ namespace Vector.Api.Data
             modelBuilder.Entity<BomItemEntity>()
                 .HasIndex(b => b.OrganizationId);
 
+            // Supplier indexes
+            modelBuilder.Entity<SupplierEntity>()
+                .HasIndex(s => s.OrganizationId);
+
+            modelBuilder.Entity<SupplierEntity>()
+                .HasIndex(s => new { s.OrganizationId, s.Code })
+                .IsUnique();
+
             // StockMovement relationships
             modelBuilder.Entity<StockMovementEntity>()
                 .HasOne(m => m.Product)
@@ -153,6 +164,12 @@ namespace Vector.Api.Data
 
             modelBuilder.Entity<StockMovementEntity>()
                 .HasIndex(m => m.ProductId);
+
+            modelBuilder.Entity<StockMovementEntity>()
+                .HasOne(m => m.Supplier)
+                .WithMany()
+                .HasForeignKey(m => m.SupplierId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // AutoIncludes for User roles & permissions
             modelBuilder.Entity<RoleEntity>()

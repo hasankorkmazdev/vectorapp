@@ -127,7 +127,7 @@ function toFilterValue(filter: FilterValue): string {
 
     case "select":
       if (typeof filter.value === "string") {
-        return `${filter.field} eq '${esc(filter.value)}'`;
+        return `tolower(${filter.field}) eq tolower('${esc(filter.value)}')`;
       }
       return `${filter.field} eq ${filter.value}`;
 

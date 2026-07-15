@@ -10,9 +10,11 @@ namespace Vector.Api.Models.Stock
         public string ProductName { get; set; } = string.Empty;
         public decimal Quantity { get; set; }
         public decimal? UnitCost { get; set; }
+        public string? Currency { get; set; }
         public decimal? TotalCost { get; set; }
         public string Type { get; set; } = string.Empty;
-        public string? Source { get; set; }
+        public Guid? SupplierId { get; set; }
+        public string? SupplierName { get; set; }
         public string? Destination { get; set; }
         public string? Note { get; set; }
         public DateTime CreatedAt { get; set; }

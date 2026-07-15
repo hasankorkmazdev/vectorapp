@@ -7,9 +7,11 @@ export interface StockMovement {
   productName: string;
   quantity: number;
   unitCost: number | null;
+  currency: string | null;
   totalCost: number | null;
   type: "In" | "Out" | "Adjustment";
-  source: string | null;
+  supplierId: string | null;
+  supplierName: string | null;
   destination: string | null;
   note: string | null;
   createdAt: string;
@@ -19,7 +21,8 @@ export interface StockMovement {
 export interface StockInData {
   quantity: number;
   unitCost?: number;
-  source?: string;
+  currency?: string;
+  supplierId?: string;
   note?: string;
 }
 

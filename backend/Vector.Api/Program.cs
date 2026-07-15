@@ -12,9 +12,11 @@ using Vector.Api.Services.Infrastructure;
 using Vector.Api.Services.Organization;
 using Vector.Api.Services.Customer;
 using Vector.Api.Services.Product;
+using Vector.Api.Services.Supplier;
 using Vector.Api.Models.Common;
 using Vector.Api.Models.Customer;
 using Vector.Api.Models.Product;
+using Vector.Api.Models.Supplier;
 using Vector.Api.Models.Auth;
 using FluentValidation;
 using System.Text;
@@ -33,6 +35,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     var modelBuilder = new ODataConventionModelBuilder();
     modelBuilder.EntitySet<CustomerListDto>("Customers");
     modelBuilder.EntitySet<ProductListDto>("Products");
+    modelBuilder.EntitySet<SupplierListDto>("Suppliers");
     modelBuilder.EntitySet<StockMovementDto>("StockMovements");
 
     var edmModel = modelBuilder.GetEdmModel();
@@ -69,6 +72,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IOrganizationService, OrganizationService>();
     builder.Services.AddScoped<ICustomerService, CustomerService>();
     builder.Services.AddScoped<IProductService, ProductService>();
+    builder.Services.AddScoped<ISupplierService, SupplierService>();
     builder.Services.AddHttpClient();
 
     builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();

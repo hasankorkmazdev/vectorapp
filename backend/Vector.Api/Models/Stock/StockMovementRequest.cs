@@ -6,7 +6,8 @@ namespace Vector.Api.Models.Stock
     {
         public decimal Quantity { get; set; }
         public decimal? UnitCost { get; set; }
-        public string? Source { get; set; }
+        public string? Currency { get; set; }
+        public Guid? SupplierId { get; set; }
         public string? Note { get; set; }
     }
 
@@ -16,7 +17,6 @@ namespace Vector.Api.Models.Stock
         {
             RuleFor(x => x.Quantity).GreaterThan(0);
             RuleFor(x => x.UnitCost).GreaterThanOrEqualTo(0).When(x => x.UnitCost.HasValue);
-            RuleFor(x => x.Source).MaximumLength(200).When(x => x.Source != null);
             RuleFor(x => x.Note).MaximumLength(500).When(x => x.Note != null);
         }
     }

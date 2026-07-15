@@ -329,9 +329,11 @@ namespace Vector.Api.Services.Product
                     ProductName = m.Product.Name,
                     Quantity = m.Quantity,
                     UnitCost = m.UnitCost,
+                    Currency = m.Currency,
                     TotalCost = m.TotalCost,
                     Type = m.Type,
-                    Source = m.Source,
+                    SupplierId = m.SupplierId,
+                    SupplierName = m.Supplier != null ? m.Supplier.Name : null,
                     Destination = m.Destination,
                     Note = m.Note,
                     CreatedAt = m.CreatedAt,
@@ -380,8 +382,9 @@ namespace Vector.Api.Services.Product
                 Quantity = request.Quantity,
                 UnitCost = request.UnitCost,
                 TotalCost = request.UnitCost.HasValue ? request.Quantity * request.UnitCost.Value : null,
+                Currency = request.Currency,
                 Type = "In",
-                Source = request.Source,
+                SupplierId = request.SupplierId,
                 Note = request.Note,
                 CreatedById = userId
             };
