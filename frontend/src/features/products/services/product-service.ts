@@ -17,6 +17,7 @@ export interface Product {
   updatedAt: string | null;
   groupId: string | null;
   groupName: string | null;
+  imageUrl: string | null;
   bomItems: BomItem[];
 }
 
@@ -35,6 +36,7 @@ export interface ProductListItem {
   updatedAt: string | null;
   groupId: string | null;
   groupName: string | null;
+  imageUrl: string | null;
 }
 
 export interface CreateProductData {
@@ -45,6 +47,7 @@ export interface CreateProductData {
   salePrice?: number;
   sellingCurrency: string;
   groupId?: string;
+  imageUrl?: string;
 }
 
 export interface UpdateProductData {
@@ -56,6 +59,7 @@ export interface UpdateProductData {
   sellingCurrency: string;
   isActive: boolean;
   groupId?: string;
+  imageUrl?: string;
 }
 
 export interface BomItem {

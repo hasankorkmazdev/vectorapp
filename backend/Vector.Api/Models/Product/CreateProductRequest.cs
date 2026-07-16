@@ -11,6 +11,7 @@ namespace Vector.Api.Models.Product
         public decimal? SalePrice { get; set; }
         public string SellingCurrency { get; set; } = "TRY";
         public Guid? GroupId { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
     public class CreateProductRequestValidator : AbstractValidator<CreateProductRequest>
@@ -23,6 +24,7 @@ namespace Vector.Api.Models.Product
             RuleFor(x => x.SalePrice).GreaterThanOrEqualTo(0).When(x => x.SalePrice.HasValue);
             RuleFor(x => x.SellingCurrency).NotEmpty().MaximumLength(10);
             RuleFor(x => x.Description).MaximumLength(1000);
+            RuleFor(x => x.ImageUrl).MaximumLength(500);
         }
     }
 }

@@ -20,6 +20,7 @@ namespace Vector.Api.Models.Product
         public DateTime? UpdatedAt { get; set; }
         public Guid? GroupId { get; set; }
         public string? GroupName { get; set; }
+        public string? ImageUrl { get; set; }
         public List<BomItemDto> BomItems { get; set; } = new();
     }
 }

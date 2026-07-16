@@ -23,6 +23,7 @@ export function EditProductPage() {
     salePrice?: string;
     sellingCurrency: string;
     groupId?: string;
+    imageUrl?: string;
   } | null>(null);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export function EditProductPage() {
           salePrice: product.salePrice?.toString() ?? "",
           sellingCurrency: product.sellingCurrency,
           groupId: product.groupId ?? "",
+          imageUrl: product.imageUrl ?? "",
         });
       } catch (error: any) {
         toast.error(t("common.error"), {
@@ -51,7 +53,7 @@ export function EditProductPage() {
     })();
   }, [id, navigate, t]);
 
-  const onSubmit = async (values: { code: string; name: string; description?: string; unit: string; salePrice?: string; sellingCurrency: string; groupId?: string }) => {
+  const onSubmit = async (values: { code: string; name: string; description?: string; unit: string; salePrice?: string; sellingCurrency: string; groupId?: string; imageUrl?: string }) => {
     if (!id) return;
     setLoading(true);
     try {
@@ -64,6 +66,7 @@ export function EditProductPage() {
         sellingCurrency: values.sellingCurrency,
         isActive: true,
         groupId: values.groupId || undefined,
+        imageUrl: values.imageUrl || undefined,
       });
       toast.success(t("common.success"), {
         description: t("products.updateSuccess"),

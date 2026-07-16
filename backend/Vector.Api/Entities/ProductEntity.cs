@@ -24,6 +24,7 @@ namespace Vector.Api.Entities
         public Guid? UpdatedById { get; set; }
         public Guid? DeletedById { get; set; }
         public Guid? GroupId { get; set; }
+        public string? ImageUrl { get; set; }
 
         public ProductGroupEntity? Group { get; set; }
         public List<BomItemEntity> ParentBomItems { get; set; } = new();

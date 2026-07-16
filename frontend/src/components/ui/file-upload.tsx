@@ -112,7 +112,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             await uploadFile(file);
         } else {
             toast.error(t("common.error"), {
-                description: t("product.validation.imageRequired")
+                description: t("product.imageValidationRequired")
             });
         }
     };

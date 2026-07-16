@@ -38,7 +38,8 @@ namespace Vector.Api.Services.Product
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
                     GroupId = p.GroupId,
-                    GroupName = p.Group != null ? p.Group.Name : null
+                    GroupName = p.Group != null ? p.Group.Name : null,
+                    ImageUrl = p.ImageUrl
                 });
         }
 
@@ -66,6 +67,7 @@ namespace Vector.Api.Services.Product
                     UpdatedAt = p.UpdatedAt,
                     GroupId = p.GroupId,
                     GroupName = p.Group != null ? p.Group.Name : null,
+                    ImageUrl = p.ImageUrl,
                     BomItems = p.ComponentBomItems.Where(b => b.DeletedAt == null).Select(b => new BomItemDto
                     {
                         Id = b.Id,
@@ -94,6 +96,7 @@ namespace Vector.Api.Services.Product
                 SalePrice = request.SalePrice,
                 SellingCurrency = request.SellingCurrency,
                 GroupId = request.GroupId,
+                ImageUrl = request.ImageUrl,
                 CreatedById = userId
             };
 
@@ -115,7 +118,8 @@ namespace Vector.Api.Services.Product
                 LastPurchasePrice = entity.LastPurchasePrice,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
-                GroupId = entity.GroupId
+                GroupId = entity.GroupId,
+                ImageUrl = entity.ImageUrl
             };
         }
 
@@ -133,6 +137,7 @@ namespace Vector.Api.Services.Product
             entity.SellingCurrency = request.SellingCurrency;
             entity.IsActive = request.IsActive;
             entity.GroupId = request.GroupId;
+            entity.ImageUrl = request.ImageUrl;
             entity.UpdatedById = userId;
 
             await _context.SaveChangesAsync();

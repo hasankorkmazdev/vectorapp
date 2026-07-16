@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Package, FileText, DollarSign, Hash, FolderTree, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FileUpload } from "@/components/ui/file-upload";
 import {
   Form,
   FormControl,
@@ -63,6 +64,7 @@ interface ProductFormValues {
   salePrice?: string;
   sellingCurrency: string;
   groupId?: string;
+  imageUrl?: string;
 }
 
 interface ProductFormProps {
@@ -102,6 +104,7 @@ export function ProductForm({ initialValues, loading, onSubmit }: ProductFormPro
     salePrice: z.string().optional(),
     sellingCurrency: z.string().min(1, t("validation.required")),
     groupId: z.string().optional(),
+    imageUrl: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -114,6 +117,7 @@ export function ProductForm({ initialValues, loading, onSubmit }: ProductFormPro
       salePrice: "",
       sellingCurrency: "TRY",
       groupId: "",
+      imageUrl: "",
     },
   });
 
@@ -264,6 +268,26 @@ export function ProductForm({ initialValues, loading, onSubmit }: ProductFormPro
                   </Popover>
                 </FormControl>
                 <FormDescription>{t("products.groupDescription")}</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="imageUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("products.image")}</FormLabel>
+                <FormControl>
+                  <FileUpload
+                    value={field.value}
+                    onChange={field.onChange}
+                    getImageUrl={(url) => url || ""}
+                    label={t("products.image")}
+                    description={t("products.imageDescription")}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

@@ -229,7 +229,9 @@
     "bomDescription": "{{name}} ürününün BOM ağacı",
     "bomDeleteConfirm": "Bu BOM bağlantısını silmek istediğinize emin misiniz?",
     "bomDeleteSuccess": "BOM bileşeni başarıyla silindi.",
-    "bomHint": "Düğümlere tıklayarak ürün detayına gidebilir, bağlantılara tıklayarak BOM ilişkisini silebilirsiniz."
+    "bomHint": "Düğümlere tıklayarak ürün detayına gidebilir, bağlantılara tıklayarak BOM ilişkisini silebilirsiniz.",
+    "image": "Ürün Fotoğrafı",
+    "imageDescription": "Ürüne ait bir fotoğraf yükleyin (JPG, PNG, WEBP, maks. 5MB)"
   },
   "stock": {
     "pageDescription": "Stok yönetimi ve hareket takibi",
@@ -315,5 +317,12 @@
     "expensePageDescription": "Gider kayıtları listesi",
     "noIncome": "Henüz gelir kaydı eklenmemiş",
     "noExpense": "Henüz gider kaydı eklenmemiş"
+  },
+  "product": {
+    "uploadFilesTitle": "Dosya yükle",
+    "uploadFilesSubtitle": "Sürükle & bırak veya tıklayarak seçin (JPG, PNG, WEBP, maks. 5MB)",
+    "browseFilesButton": "Dosya Seç",
+    "uploadThumbnailAlt": "Yüklenen dosya",
+    "imageValidationRequired": "Lütfen bir resim dosyası seçin."
   }
 }
