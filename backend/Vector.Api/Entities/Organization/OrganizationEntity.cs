@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Vector.Api.Entities
+namespace Vector.Api.Entities.Organization
 {
     public class OrganizationEntity
     {

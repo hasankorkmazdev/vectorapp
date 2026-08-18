@@ -64,24 +64,24 @@ Services/
     MailService.cs, CaptchaService.cs
 ```
 
-### Rules (`.agents/rules/`)
-1. **No `record`** keyword in backend.
-2. **FluentValidation** in the same file as the model class.
-   **Her model kendi dosyasında** — birden fazla model aynı dosyada olmaz. Model + validatörü aynı dosyada kalır ama başka bir model o dosyaya girmez.
-3. **All API messages in English.** Use FluentValidation's default messages when possible.
-4. **No magic strings** in frontend — always use i18n locale files (`src/i18n/locales/{en,tr}/`).
-5. **Use shadcn/ui components** (`src/components/ui/`) in their original form — never raw `<input>`, `<button>`, etc. Components from `src/components/ui/` must be used as-is; do not add extra styling, wrapper divs, or override className unless the component exposes it via props. This ensures visual consistency across pages.
-6. **Every input** must have validation error (`FormMessage`) in red below + a description (`FormDescription`).
-7. **Components must be small logical pieces** — avoid monolithic components.
-8. Locale files are flat-merged at runtime (no nested JSON key structure).
+### Kurallar (`.agents/rules/`)
+1. **Backend'de `record` keyword'ü kullanma.**
+2. **FluentValidation, model sınıfıyla aynı dosyada olmalı.**
+   **Her model kendi dosyasında olmalı** — birden fazla model aynı dosyada bulunamaz. Model ve validatörü aynı dosyada kalır ancak başka bir model bu dosyaya eklenmez.
+3. **Tüm API mesajları İngilizce olmalı.** Mümkün olduğunda FluentValidation'ın varsayılan mesajları kullanılmalı.
+4. **Frontend'de magic string kullanma** — her zaman i18n locale dosyalarını (`src/i18n/locales/{en,tr}/`) kullan.
+5. **shadcn/ui componentlerini** (`src/components/ui/`) orijinal halleriyle kullan — hiçbir zaman doğrudan `<input>`, `<button>` vb. kullanma. `src/components/ui/` altındaki componentler olduğu gibi kullanılmalı; component prop olarak desteklemiyorsa ekstra stil, wrapper `div` veya `className` override eklenmemeli. Bu, tüm sayfalarda görsel tutarlılığı sağlar.
+6. **Her input için** aşağıda kırmızı renkte validation hatası (`FormMessage`) ve bir açıklama (`FormDescription`) bulunmalı.
+7. **Componentler küçük ve mantıksal parçalardan oluşmalı** — monolitik componentlerden kaçın.
+8. **Locale dosyaları runtime sırasında flat-merge edilir** — iç içe JSON key yapısı kullanılmaz.
 9. **Küçük mantıksal parçalara ayır** — tek bir fonksiyon/component birden fazla iş yapmamalı. Backend'de servisleri, frontend'de componentleri mantıksal sınırlarına göre böl.
-10. **Tekrar eden yapıları componentleştir** — bir UI kalıbı 2+ yerde kullanılıyorsa ortak bir component olarak ayır.
-11. **Max 300 satır** — component veya sayfa dosyaları 300 satırı geçmemeli. Geçiyorsa mantıksal alt parçalara böl.
-12. **Sadece Türkçe localization** — yeni eklenen metinler yalnızca `tr/common.json` ve varsa `tr/` altındaki locale dosyalarına girilir. `en/` dosyalarına ekleme yapılmaz.
-13. **Ternary `:` kullanımı** — JSX içinde ternary (`condition ? <A> : <B>`) kullanıldığında, `:` öncesi ve sonrası ayrı fonksiyonlara çıkarılmalıdır (`renderLoading()`, `renderEmpty()`, `renderContent()` gibi). Ternary yalnızca hangi fonksiyonun çağrılacağını seçmek için kullanılır, JSX doğrudan ternary içine yazılmaz.
+10. **Tekrar eden yapıları componentleştir** — bir UI kalıbı 2 veya daha fazla yerde kullanılıyorsa ortak bir component olarak ayır.
+11. **Maksimum 300 satır** — component veya sayfa dosyaları 300 satırı geçmemeli. Geçiyorsa mantıksal alt parçalara böl.
+12. **Sadece Türkçe localization** — yeni eklenen metinler yalnızca `tr/common.json` ve varsa `tr/` altındaki locale dosyalarına eklenir. `en/` dosyalarına ekleme yapılmaz.
+13. **Ternary `:` kullanımı** — JSX içinde ternary (`condition ? <A> : <B>`) kullanıldığında, `:` öncesindeki ve sonrasındaki içerikler ayrı fonksiyonlara çıkarılmalıdır (`renderLoading()`, `renderEmpty()`, `renderContent()` gibi). Ternary yalnızca hangi fonksiyonun çağrılacağını seçmek için kullanılmalı; JSX doğrudan ternary içinde yazılmamalıdır.
 
-### Null handling
-**No `??` fallbacks** — if a value is null, let it throw at runtime. Do not add default/fallback values.
+### Null kullanımı
+**`??` ile fallback kullanma** — bir değer `null` ise runtime'da hata vermesine izin ver. Varsayılan veya fallback değer ekleme.
 
 ## Key dependencies
 

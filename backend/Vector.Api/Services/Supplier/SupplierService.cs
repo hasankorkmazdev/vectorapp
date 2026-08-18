@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Vector.Api.Data;
-using Vector.Api.Entities;
+using Vector.Api.Entities.Supplier;
 using Vector.Api.Models.Supplier;
 
 namespace Vector.Api.Services.Supplier

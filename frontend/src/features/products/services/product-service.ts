@@ -36,6 +36,7 @@ export interface ProductListItem {
   updatedAt: string | null;
   groupId: string | null;
   groupName: string | null;
+  groupIcon: string | null;
   imageUrl: string | null;
 }
 

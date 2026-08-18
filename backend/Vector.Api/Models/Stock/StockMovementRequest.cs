@@ -25,6 +25,7 @@ namespace Vector.Api.Models.Stock
     public class StockOutRequest
     {
         public decimal Quantity { get; set; }
+        public Guid? CustomerId { get; set; }
         public string? Destination { get; set; }
         public string? Note { get; set; }
     }

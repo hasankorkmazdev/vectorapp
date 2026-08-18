@@ -1,18 +1,17 @@
 using System;
 
-namespace Vector.Api.Entities
+namespace Vector.Api.Entities.Customer
 {
-    public class CustomerAddressEntity
+    public class CustomerContactEntity
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
         public CustomerEntity? Customer { get; set; }
-        public string Label { get; set; } = string.Empty;
-        public string? Country { get; set; }
-        public string? City { get; set; }
-        public string? District { get; set; }
-        public string? PostalCode { get; set; }
-        public string? Address { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string? Title { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+        public string? Gsm { get; set; }
         public bool IsPrimary { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }

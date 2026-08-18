@@ -4,7 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Vector.Api.Data;
-using Vector.Api.Entities;
+using Vector.Api.Entities.Customer;
+using Vector.Api.Entities.Inventory;
+using Vector.Api.Entities.Product;
+using Vector.Api.Entities.Supplier;
 using Vector.Api.Models.Product;
 using Vector.Api.Models.Stock;
 
@@ -39,6 +42,7 @@ namespace Vector.Api.Services.Product
                     UpdatedAt = p.UpdatedAt,
                     GroupId = p.GroupId,
                     GroupName = p.Group != null ? p.Group.Name : null,
+                    GroupIcon = p.Group != null ? p.Group.Icon : null,
                     ImageUrl = p.ImageUrl
                 });
         }
@@ -67,6 +71,7 @@ namespace Vector.Api.Services.Product
                     UpdatedAt = p.UpdatedAt,
                     GroupId = p.GroupId,
                     GroupName = p.Group != null ? p.Group.Name : null,
+                    GroupIcon = p.Group != null ? p.Group.Icon : null,
                     ImageUrl = p.ImageUrl,
                     BomItems = p.ComponentBomItems.Where(b => b.DeletedAt == null).Select(b => new BomItemDto
                     {
@@ -348,6 +353,8 @@ namespace Vector.Api.Services.Product
                     Type = m.Type,
                     SupplierId = m.SupplierId,
                     SupplierName = m.Supplier != null ? m.Supplier.Name : null,
+                    CustomerId = m.CustomerId,
+                    CustomerName = m.Customer != null ? m.Customer.CompanyName : null,
                     WarehouseId = m.WarehouseId,
                     WarehouseName = m.Warehouse != null ? m.Warehouse.Name : null,
                     Destination = m.Destination,
@@ -399,7 +406,7 @@ namespace Vector.Api.Services.Product
                 UnitCost = request.UnitCost,
                 TotalCost = request.UnitCost.HasValue ? request.Quantity * request.UnitCost.Value : null,
                 Currency = request.Currency,
-                Type = "In",
+                Type = StockMovementType.In,
                 SupplierId = request.SupplierId,
                 WarehouseId = request.WarehouseId,
                 Note = request.Note,
@@ -437,7 +444,8 @@ namespace Vector.Api.Services.Product
                 Quantity = request.Quantity,
                 UnitCost = unitCost,
                 TotalCost = unitCost.HasValue ? request.Quantity * unitCost.Value : null,
-                Type = "Out",
+                Type = StockMovementType.Out,
+                CustomerId = request.CustomerId,
                 Destination = request.Destination,
                 Note = request.Note,
                 CreatedById = userId
@@ -475,7 +483,7 @@ namespace Vector.Api.Services.Product
                 Quantity = Math.Abs(diff),
                 UnitCost = product.AvgCost,
                 TotalCost = product.AvgCost.HasValue ? Math.Abs(diff) * product.AvgCost.Value : null,
-                Type = "Adjustment",
+                Type = StockMovementType.Adjustment,
                 Note = request.Note,
                 CreatedById = userId
             };

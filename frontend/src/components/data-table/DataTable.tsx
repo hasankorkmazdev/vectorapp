@@ -110,7 +110,7 @@ export function DataTable<T extends { id: string }>({
 
   return (
     <Card>
-      <CardContent className="p-0">
+      <CardContent className="py-2 px-1">
         <Table>
           <DataTableHeader
             columns={columns}

@@ -1,5 +1,5 @@
 using Vector.Api.Data;
-using Vector.Api.Entities;
+using Vector.Api.Entities.User;
 using System.Security.Claims;
 using System.Threading.Tasks;
 

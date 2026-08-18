@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Vector.Api.Data;
-using Vector.Api.Entities;
+using Vector.Api.Entities.Customer;
 using Vector.Api.Models.Customer;
 
 namespace Vector.Api.Services.Customer

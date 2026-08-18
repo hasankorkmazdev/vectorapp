@@ -1,6 +1,6 @@
 using System;
 
-namespace Vector.Api.Entities
+namespace Vector.Api.Entities.Auth
 {
     public class RolePermissionEntity
     {

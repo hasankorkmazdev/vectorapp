@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -23,8 +23,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Check, X } from "lucide-react";
 import { stockService } from "@/features/stock/services/stock-service";
+import { customerService } from "@/features/customers/services/customer-service";
+import type { Customer } from "@/features/customers/types";
 
 interface Props {
   productId: string;
@@ -35,19 +44,33 @@ interface Props {
 }
 
 const formSchema = z.object({
+  customerId: z.string().optional(),
   destination: z.string().max(200).optional(),
   note: z.string().max(500).optional(),
 });
 
 export function StockOutDialog({ productId, unit, open, onOpenChange, onSuccess }: Props) {
   const { t } = useTranslation();
+  const [customers, setCustomers] = useState<Customer[]>([]);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { destination: "", note: "" },
+    defaultValues: { customerId: undefined, destination: "", note: "" },
   });
 
   const [quantityStr, setQuantityStr] = useState("1");
+
+  useEffect(() => {
+    if (!open) return;
+    const controller = new AbortController();
+    customerService.getAll({ pageSize: 500 }, controller.signal)
+      .then((res) => {
+        const body = res.data;
+        setCustomers(Array.isArray(body) ? body : body?.value ?? []);
+      })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [open]);
 
   const onSubmit = async (values: any) => {
     const qty = Number(quantityStr);
@@ -55,6 +78,7 @@ export function StockOutDialog({ productId, unit, open, onOpenChange, onSuccess 
     try {
       await stockService.stockOut(productId, {
         quantity: qty,
+        customerId: values.customerId || undefined,
         destination: values.destination || undefined,
         note: values.note || undefined,
       });
@@ -70,7 +94,7 @@ export function StockOutDialog({ productId, unit, open, onOpenChange, onSuccess 
 
   const resetForm = () => {
     setQuantityStr("1");
-    form.reset({ destination: "", note: "" });
+    form.reset({ customerId: undefined, destination: "", note: "" });
     onOpenChange(false);
   };
 
@@ -97,6 +121,35 @@ export function StockOutDialog({ productId, unit, open, onOpenChange, onSuccess 
               </div>
               <p className="text-[0.8rem] text-muted-foreground">{t("stock.quantityDescription")}</p>
             </div>
+            <FormField
+              control={form.control}
+              name="customerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("stock.customer")}</FormLabel>
+                  <Select
+                    value={field.value ?? "__none__"}
+                    onValueChange={(val) => field.onChange(val === "__none__" ? undefined : val)}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("stock.customerPlaceholder")} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="__none__">{t("stock.customerNone")}</SelectItem>
+                      {customers.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.code} - {c.companyName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>{t("stock.customerDescription")}</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="destination"

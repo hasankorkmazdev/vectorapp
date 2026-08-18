@@ -210,6 +210,9 @@
     "groupNewDialogTitle": "Yeni Ürün Grubu",
     "groupNewDialogDescription": "Yeni bir ürün grubu oluşturun.",
     "groupNewDialogPlaceholder": "Grup adı girin",
+    "groupIcon": "Grup Iconu",
+    "groupIconPlaceholder": "Icon seçin",
+    "groupIconDescription": "Grubu temsil eden Lucide icon adı",
     "deleteConfirm": "Bu ürünü silmek istediğinize emin misiniz?",
     "deleteSuccess": "Ürün başarıyla silindi.",
     "tabDetails": "Genel Bilgiler",
@@ -270,6 +273,10 @@
     "typeIn": "Giriş",
     "typeOut": "Çıkış",
     "typeAdjustment": "Düzeltme",
+    "customer": "Müşteri",
+    "customerPlaceholder": "Müşteri seçin",
+    "customerNone": "Müşteri yok",
+    "customerDescription": "Stok çıkışı yapılan müşteri (opsiyonel)",
     "empty": "Henüz ürün eklenmemiş"
   },
   "financial": {

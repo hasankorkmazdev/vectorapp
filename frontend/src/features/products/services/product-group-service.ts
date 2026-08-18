@@ -3,6 +3,7 @@ import { api } from "@/api/axios";
 export interface ProductGroup {
   id: string;
   name: string;
+  icon: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string | null;
@@ -10,6 +11,7 @@ export interface ProductGroup {
 
 export interface CreateProductGroupData {
   name: string;
+  icon: string;
 }
 
 export const productGroupService = {

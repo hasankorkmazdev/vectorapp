@@ -6,7 +6,7 @@ using Vector.Api.Models.Organization;
 using Vector.Api.Services.Auth;
 using System;
 using System.Linq;
-using Vector.Api.Entities;
+using Vector.Api.Entities.User;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Vector.Api.Extensions;

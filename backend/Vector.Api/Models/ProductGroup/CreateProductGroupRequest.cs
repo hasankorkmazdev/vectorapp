@@ -5,6 +5,7 @@ namespace Vector.Api.Models.ProductGroup
     public class CreateProductGroupRequest
     {
         public string Name { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
     }
 
     public class CreateProductGroupRequestValidator : AbstractValidator<CreateProductGroupRequest>
@@ -12,6 +13,7 @@ namespace Vector.Api.Models.ProductGroup
         public CreateProductGroupRequestValidator()
         {
             RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
+            RuleFor(x => x.Icon).NotEmpty().MaximumLength(50);
         }
     }
 }

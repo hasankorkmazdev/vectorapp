@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Vector.Api.Entities
+namespace Vector.Api.Entities.Auth
 {
     public class PermissionEntity
     {

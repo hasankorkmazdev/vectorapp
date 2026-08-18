@@ -1,6 +1,7 @@
 using System;
+using Vector.Api.Entities.User;
 
-namespace Vector.Api.Entities
+namespace Vector.Api.Entities.Auth
 {
     public class RefreshTokenEntity
     {

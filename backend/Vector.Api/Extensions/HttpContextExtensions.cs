@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Vector.Api.Entities;
+using Vector.Api.Entities.User;
 using Vector.Api.Services.Auth;
 using System;
 using System.Security.Claims;

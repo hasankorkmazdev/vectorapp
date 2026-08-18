@@ -8,7 +8,7 @@ using Vector.Api.Models.Auth;
 using Vector.Api.Models.Organization;
 using Vector.Api.Services.Auth;
 using Vector.Api.Services.Infrastructure;
-using Vector.Api.Entities;
+using Vector.Api.Entities.User;
 using System;
 using System.Threading.Tasks;
 

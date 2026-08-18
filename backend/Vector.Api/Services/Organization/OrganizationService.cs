@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Vector.Api.Data;
-using Vector.Api.Entities;
+using Vector.Api.Entities.Auth;
+using Vector.Api.Entities.Organization;
+using Vector.Api.Entities.User;
 using Vector.Api.Models.Organization;
 
 namespace Vector.Api.Services.Organization

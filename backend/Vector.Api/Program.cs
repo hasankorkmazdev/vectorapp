@@ -64,7 +64,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(connectionString));
+        options.UseSqlite(connectionString));
 
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IMailService, MailService>();

@@ -1,9 +1,17 @@
 using Microsoft.EntityFrameworkCore;
-using Vector.Api.Entities;
 using Microsoft.AspNetCore.Http;
+using Vector.Api.Entities.Auth;
+using Vector.Api.Entities.Common;
+using Vector.Api.Entities.Customer;
+using Vector.Api.Entities.Inventory;
+using Vector.Api.Entities.Organization;
+using Vector.Api.Entities.Product;
+using Vector.Api.Entities.Supplier;
+using Vector.Api.Entities.User;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,6 +49,29 @@ namespace Vector.Api.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+            {
+                var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                modelBuilder.Entity<CustomerEntity>()
+                    .Property(c => c.Phone)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, jsonOptions),
+                        v => JsonSerializer.Deserialize<List<string>>(v, jsonOptions) ?? new());
+
+                modelBuilder.Entity<CustomerEntity>()
+                    .Property(c => c.Email)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, jsonOptions),
+                        v => JsonSerializer.Deserialize<List<string>>(v, jsonOptions) ?? new());
+
+                modelBuilder.Entity<OrganizationEntity>()
+                    .Property(o => o.SupportedLanguages)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, jsonOptions),
+                        v => JsonSerializer.Deserialize<List<string>>(v, jsonOptions) ?? new());
+            }
 
             // Configure Plural Table Names explicitly
             modelBuilder.Entity<UserEntity>().ToTable("Users");
@@ -181,6 +212,12 @@ namespace Vector.Api.Data
                 .HasOne(m => m.Warehouse)
                 .WithMany()
                 .HasForeignKey(m => m.WarehouseId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<StockMovementEntity>()
+                .HasOne(m => m.Customer)
+                .WithMany()
+                .HasForeignKey(m => m.CustomerId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             // Warehouse indexes

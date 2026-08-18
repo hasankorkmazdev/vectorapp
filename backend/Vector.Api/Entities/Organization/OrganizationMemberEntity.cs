@@ -1,6 +1,8 @@
 using System;
+using Vector.Api.Entities.Auth;
+using Vector.Api.Entities.User;
 
-namespace Vector.Api.Entities
+namespace Vector.Api.Entities.Organization
 {
     public class OrganizationMemberEntity
     {

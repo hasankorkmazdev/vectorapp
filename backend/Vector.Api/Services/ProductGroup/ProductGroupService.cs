@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Vector.Api.Data;
-using Vector.Api.Entities;
+using Vector.Api.Entities.Product;
 using Vector.Api.Models.ProductGroup;
 
 namespace Vector.Api.Services.ProductGroup
@@ -25,6 +25,7 @@ namespace Vector.Api.Services.ProductGroup
                 {
                     Id = g.Id,
                     Name = g.Name,
+                    Icon = g.Icon,
                     IsActive = g.IsActive,
                     CreatedAt = g.CreatedAt,
                     UpdatedAt = g.UpdatedAt
@@ -38,6 +39,7 @@ namespace Vector.Api.Services.ProductGroup
                 Id = Guid.NewGuid(),
                 OrganizationId = organizationId,
                 Name = request.Name,
+                Icon = request.Icon,
                 CreatedById = userId
             };
 
@@ -48,6 +50,7 @@ namespace Vector.Api.Services.ProductGroup
             {
                 Id = entity.Id,
                 Name = entity.Name,
+                Icon = entity.Icon,
                 IsActive = entity.IsActive,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt

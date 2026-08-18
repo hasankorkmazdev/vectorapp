@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Vector.Api.Entities.Inventory;
 
-namespace Vector.Api.Entities
+namespace Vector.Api.Entities.Product
 {
     public class ProductEntity
     {

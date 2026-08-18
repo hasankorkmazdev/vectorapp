@@ -1,4 +1,5 @@
 using System;
+using Vector.Api.Entities.Inventory;
 
 namespace Vector.Api.Models.Stock
 {
@@ -12,9 +13,11 @@ namespace Vector.Api.Models.Stock
         public decimal? UnitCost { get; set; }
         public string? Currency { get; set; }
         public decimal? TotalCost { get; set; }
-        public string Type { get; set; } = string.Empty;
+        public StockMovementType Type { get; set; }
         public Guid? SupplierId { get; set; }
         public string? SupplierName { get; set; }
+        public Guid? CustomerId { get; set; }
+        public string? CustomerName { get; set; }
         public Guid? WarehouseId { get; set; }
         public string? WarehouseName { get; set; }
         public string? Destination { get; set; }

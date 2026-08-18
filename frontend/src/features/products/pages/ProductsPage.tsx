@@ -12,6 +12,7 @@ import { DataTable } from "@/components/data-table/DataTable";
 import type { Column, SortState, FilterValue } from "@/components/data-table/types";
 import { Button } from "@/components/ui/button";
 import { Plus, Package, Hash, Ruler, ArrowDownToLine, ArrowUpFromLine, History, Warehouse, FolderTree, Coins, ShoppingBag } from "lucide-react";
+import { TagIcon } from "@/components/tag-icon";
 import { toast } from "sonner";
 
 export function StocksPage() {
@@ -145,7 +146,12 @@ export function StocksPage() {
       filterType: "select",
       filterOptions: groupOptions,
       className: "whitespace-nowrap",
-      render: (p) => p.groupName ?? "-",
+      render: (p) => p.groupName ? (
+        <span className="inline-flex items-center gap-1.5">
+          <TagIcon icon={p.groupIcon ?? ""} className="h-4 w-4 shrink-0" />
+          {p.groupName}
+        </span>
+      ) : "-",
     },
     {
       key: "avgCost",

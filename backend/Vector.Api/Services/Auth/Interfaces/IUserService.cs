@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Vector.Api.Entities;
+using Vector.Api.Entities.User;
 using Vector.Api.Models.Auth;
 using Vector.Api.Models.Profile;
 

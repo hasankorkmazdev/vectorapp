@@ -1,4 +1,11 @@
-using Vector.Api.Entities;
+using Vector.Api.Entities.Auth;
+using Vector.Api.Entities.Common;
+using Vector.Api.Entities.Customer;
+using Vector.Api.Entities.Inventory;
+using Vector.Api.Entities.Organization;
+using Vector.Api.Entities.Product;
+using Vector.Api.Entities.Supplier;
+using Vector.Api.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -281,6 +288,7 @@ namespace Vector.Api.Data
                     Id = SeedConstants.ProductGroupOilId,
                     OrganizationId = SeedConstants.OrganizationKBB,
                     Name = "Yağlar",
+                    Icon = "Droplets",
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 },
@@ -289,6 +297,7 @@ namespace Vector.Api.Data
                     Id = SeedConstants.ProductGroupFilterId,
                     OrganizationId = SeedConstants.OrganizationKBB,
                     Name = "Filtreler",
+                    Icon = "Filter",
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 },
@@ -297,6 +306,7 @@ namespace Vector.Api.Data
                     Id = SeedConstants.ProductGroupBearingId,
                     OrganizationId = SeedConstants.OrganizationKBB,
                     Name = "Rulmanlar",
+                    Icon = "CircleDot",
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 },
@@ -305,6 +315,7 @@ namespace Vector.Api.Data
                     Id = SeedConstants.ProductGroupHydraulicId,
                     OrganizationId = SeedConstants.OrganizationKBB,
                     Name = "Hidrolik Ekipmanlar",
+                    Icon = "Wrench",
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 },
@@ -313,6 +324,7 @@ namespace Vector.Api.Data
                     Id = SeedConstants.ProductGroupElectricalId,
                     OrganizationId = SeedConstants.OrganizationKBB,
                     Name = "Elektrik Ekipmanları",
+                    Icon = "Zap",
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 }
@@ -517,7 +529,7 @@ namespace Vector.Api.Data
                 UnitCost = sp.UnitCost,
                 Currency = "TRY",
                 TotalCost = sp.Quantity * sp.UnitCost,
-                Type = "In",
+                Type = StockMovementType.In,
                 WarehouseId = SeedConstants.DefaultWarehouseId,
                 Note = "Initial seed stock",
                 CreatedById = SeedConstants.OrganizationAdminUserId,

@@ -12,6 +12,8 @@ export interface StockMovement {
   type: "In" | "Out" | "Adjustment";
   supplierId: string | null;
   supplierName: string | null;
+  customerId: string | null;
+  customerName: string | null;
   warehouseId: string | null;
   warehouseName: string | null;
   destination: string | null;
@@ -31,6 +33,7 @@ export interface StockInData {
 
 export interface StockOutData {
   quantity: number;
+  customerId?: string;
   destination?: string;
   note?: string;
 }

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Package, FileText, DollarSign, Hash, FolderTree, Plus } from "lucide-react";
+import { TagIcon } from "@/components/tag-icon";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
 import {
@@ -55,6 +56,14 @@ import { cn } from "@/lib/utils";
 
 const UNITS = ["Adet", "Kg", "m", "L", "m²", "m³", "Paket", "Kutu", "Takım", "Çift"];
 const SELLING_CURRENCIES = ["TRY", "USD", "EUR"];
+const GROUP_ICON_OPTIONS = [
+  "Droplets", "Filter", "CircleDot", "Wrench", "Zap",
+  "Package", "Box", "Cog", "Truck", "ShoppingCart",
+  "Tag", "Layers", "CircuitBoard", "Shield", "Flame",
+  "Thermometer", "Gauge", "Ruler", "Scissors", "Hammer",
+  "Brush", "Sprout", "TreePine", "Fish", "Bone",
+  "Heart", "Star", "Clock", "Bell", "Settings",
+];
 
 interface ProductFormValues {
   code: string;
@@ -79,6 +88,7 @@ export function ProductForm({ initialValues, loading, onSubmit }: ProductFormPro
   const [groupOpen, setGroupOpen] = useState(false);
   const [newGroupDialogOpen, setNewGroupDialogOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupIcon, setNewGroupIcon] = useState("");
   const [newGroupLoading, setNewGroupLoading] = useState(false);
 
   const fetchGroups = useCallback(async () => {
@@ -127,12 +137,13 @@ export function ProductForm({ initialValues, loading, onSubmit }: ProductFormPro
     if (!newGroupName.trim()) return;
     setNewGroupLoading(true);
     try {
-      const res = await productGroupService.create({ name: newGroupName.trim() });
+      const res = await productGroupService.create({ name: newGroupName.trim(), icon: newGroupIcon.trim() });
       const created = res.data.data;
       setGroups((prev) => [...prev, created]);
       form.setValue("groupId", created.id);
       setNewGroupDialogOpen(false);
       setNewGroupName("");
+      setNewGroupIcon("");
       toast.success(t("common.success"), {
         description: t("products.groupCreateSuccess"),
       });
@@ -216,10 +227,15 @@ export function ProductForm({ initialValues, loading, onSubmit }: ProductFormPro
                         variant="outline"
                         role="combobox"
                         aria-expanded={groupOpen}
-                        className="w-full justify-between"
+                        className="h-9 w-full justify-between"
                       >
                         {selectedGroup
-                          ? selectedGroup.name
+                          ? (
+                            <span className="inline-flex items-center gap-2">
+                              <TagIcon icon={selectedGroup.icon} className="h-4 w-4 shrink-0" />
+                              {selectedGroup.name}
+                            </span>
+                          )
                           : t("products.groupPlaceholder")}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -258,6 +274,7 @@ export function ProductForm({ initialValues, loading, onSubmit }: ProductFormPro
                                       : "opacity-0"
                                   )}
                                 />
+                                <TagIcon icon={group.icon} className="mr-2 h-4 w-4 shrink-0" />
                                 {group.name}
                               </CommandItem>
                             ))}
@@ -434,12 +451,35 @@ export function ProductForm({ initialValues, loading, onSubmit }: ProductFormPro
                 }}
               />
             </InputGroup>
+            <div className="space-y-2">
+              <FormLabel>{t("products.groupIcon")}</FormLabel>
+              <div className="grid grid-cols-10 gap-1">
+                {GROUP_ICON_OPTIONS.map((iconName) => (
+                  <button
+                    key={iconName}
+                    type="button"
+                    className={cn(
+                      "flex h-8 w-8 items-center justify-center rounded-md border transition-colors",
+                      newGroupIcon === iconName
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-transparent hover:bg-muted"
+                    )}
+                    onClick={() => setNewGroupIcon(iconName)}
+                    title={iconName}
+                  >
+                    <TagIcon icon={iconName} className="h-4 w-4" />
+                  </button>
+                ))}
+              </div>
+              <FormDescription>{t("products.groupIconDescription")}</FormDescription>
+            </div>
             <div className="flex justify-end gap-2">
               <Button
                 variant="outline"
                 onClick={() => {
                   setNewGroupDialogOpen(false);
                   setNewGroupName("");
+                  setNewGroupIcon("");
                 }}
               >
                 {t("common.cancel")}

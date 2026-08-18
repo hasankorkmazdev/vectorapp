@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Vector.Api.Entities;
+using Vector.Api.Entities.User;
 using System;
 using System.Threading.Tasks;
 

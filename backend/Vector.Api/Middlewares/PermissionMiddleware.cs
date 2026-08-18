@@ -9,7 +9,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Vector.Api.Attributes;
 using Vector.Api.Data;
-using Vector.Api.Entities;
+using Vector.Api.Entities.Auth;
+using Vector.Api.Entities.Organization;
 using Vector.Api.Extensions;
 using Vector.Api.Models.Common;
 
