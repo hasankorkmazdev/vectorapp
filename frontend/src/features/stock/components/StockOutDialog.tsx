@@ -32,8 +32,10 @@ import {
 } from "@/components/ui/select";
 import { Check, X } from "lucide-react";
 import { stockService } from "@/features/stock/services/stock-service";
-import { customerService } from "@/features/customers/services/customer-service";
-import type { Customer } from "@/features/customers/types";
+import { accountService } from "@/features/account/services/account-service";
+import type { Account } from "@/features/account/types";
+
+const CUSTOMER_TAG_NAME = "Müşteri";
 
 interface Props {
   productId: string;
@@ -44,18 +46,18 @@ interface Props {
 }
 
 const formSchema = z.object({
-  customerId: z.string().optional(),
+  accountId: z.string().optional(),
   destination: z.string().max(200).optional(),
   note: z.string().max(500).optional(),
 });
 
 export function StockOutDialog({ productId, unit, open, onOpenChange, onSuccess }: Props) {
   const { t } = useTranslation();
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customers, setCustomers] = useState<Account[]>([]);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { customerId: undefined, destination: "", note: "" },
+    defaultValues: { accountId: undefined, destination: "", note: "" },
   });
 
   const [quantityStr, setQuantityStr] = useState("1");
@@ -63,11 +65,8 @@ export function StockOutDialog({ productId, unit, open, onOpenChange, onSuccess 
   useEffect(() => {
     if (!open) return;
     const controller = new AbortController();
-    customerService.getAll({ pageSize: 500 }, controller.signal)
-      .then((res) => {
-        const body = res.data;
-        setCustomers(Array.isArray(body) ? body : body?.value ?? []);
-      })
+    accountService.getByTag(CUSTOMER_TAG_NAME, controller.signal)
+      .then(setCustomers)
       .catch(() => {});
     return () => controller.abort();
   }, [open]);
@@ -78,7 +77,7 @@ export function StockOutDialog({ productId, unit, open, onOpenChange, onSuccess 
     try {
       await stockService.stockOut(productId, {
         quantity: qty,
-        customerId: values.customerId || undefined,
+        accountId: values.accountId || undefined,
         destination: values.destination || undefined,
         note: values.note || undefined,
       });
@@ -94,7 +93,7 @@ export function StockOutDialog({ productId, unit, open, onOpenChange, onSuccess 
 
   const resetForm = () => {
     setQuantityStr("1");
-    form.reset({ customerId: undefined, destination: "", note: "" });
+    form.reset({ accountId: undefined, destination: "", note: "" });
     onOpenChange(false);
   };
 
@@ -123,7 +122,7 @@ export function StockOutDialog({ productId, unit, open, onOpenChange, onSuccess 
             </div>
             <FormField
               control={form.control}
-              name="customerId"
+              name="accountId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("stock.customer")}</FormLabel>

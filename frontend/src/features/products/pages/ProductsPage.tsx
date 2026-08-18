@@ -11,8 +11,9 @@ import { StockMovementsPanel } from "@/features/stock/components/StockMovementsP
 import { DataTable } from "@/components/data-table/DataTable";
 import type { Column, SortState, FilterValue } from "@/components/data-table/types";
 import { Button } from "@/components/ui/button";
-import { Plus, Package, Hash, Ruler, ArrowDownToLine, ArrowUpFromLine, History, Warehouse, FolderTree, Coins, ShoppingBag } from "lucide-react";
+import { Plus, Package, Hash, ArrowDownToLine, ArrowUpFromLine, History, FolderTree, Coins, ShoppingBag, Box } from "lucide-react";
 import { TagIcon } from "@/components/tag-icon";
+import { PriceDisplay } from "@/components/price-display";
 import { toast } from "sonner";
 
 export function StocksPage() {
@@ -72,30 +73,15 @@ export function StocksPage() {
     });
   }, []);
 
-  const groupOptions = groups.map((g) => ({ label: g.name, value: g.name }));
-
-  const unitOptions = [
-    { label: "Adet", value: "adet" },
-    { label: "Kg", value: "kg" },
-    { label: "Litre", value: "litre" },
-    { label: "Metre", value: "m" },
-    { label: "m²", value: "m2" },
-    { label: "m³", value: "m3" },
-    { label: "Paket", value: "paket" },
-    { label: "Kutu", value: "kutu" },
-    { label: "Takım", value: "takım" },
-    { label: "Çift", value: "çift" },
-  ];
+  const groupOptions = groups.map((g) => ({
+    label: g.name,
+    value: g.name,
+    icon: <TagIcon icon={g.icon} className="h-4 w-4 shrink-0" />,
+  }));
 
   const fmtCurrency = (v: number | null, currency?: string | null) => {
     if (v == null) return "-";
-    const cur = currency || "TRY";
-    const formatted = new Intl.NumberFormat("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
-    return (
-      <span>
-        <span className="font-semibold">{cur}</span>{" "}{formatted}
-      </span>
-    );
+    return <PriceDisplay value={v} currency={currency || "TRY"} />;
   };
 
   const renderStockActions = (p: ProductListItem) => (
@@ -154,6 +140,20 @@ export function StocksPage() {
       ) : "-",
     },
     {
+      key: "stockQuantity",
+      label: t("stock.stockQuantity"),
+      icon: <Box className="h-4 w-4" />,
+      sortable: true,
+      filterable: true,
+      filterType: "number",
+      className: "whitespace-nowrap",
+      render: (p) => (
+        <span className={p.stockQuantity <= 0 ? "text-red-600 font-medium" : ""}>
+          {p.stockQuantity} {p.unit}
+        </span>
+      ),
+    },
+    {
       key: "avgCost",
       label: t("stock.avgCost"),
       icon: <Coins className="h-4 w-4" />,
@@ -179,16 +179,6 @@ export function StocksPage() {
       filterable: true,
       filterType: "number",
       render: (p) => fmtCurrency(p.salePrice, p.sellingCurrency),
-    },
-    {
-      key: "unit",
-      label: t("products.unit"),
-      icon: <Ruler className="h-4 w-4" />,
-      sortable: true,
-      filterable: true,
-      filterType: "select",
-      filterOptions: unitOptions,
-      render: (p) => p.unit,
     },
     {
       key: "actions",

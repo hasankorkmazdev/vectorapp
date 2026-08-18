@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { ChevronDown, ChevronUp, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,108 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
   TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { DateRangeFilter } from "./DateRangeFilter";
 import type { Column, SortState, FilterValue, FilterOption } from "./types";
+
+interface MultiSelectFilterProps {
+  col: Column<unknown>;
+  currentFilter: FilterValue | undefined;
+  onFilterChange: (field: string, filter: FilterValue | null) => void;
+}
+
+function MultiSelectFilter({ col, currentFilter, onFilterChange }: MultiSelectFilterProps) {
+  const [open, setOpen] = useState(false);
+  const options = col.filterOptions;
+
+  if (typeof options === "string") {
+    return (
+      <Input
+        placeholder={col.placeholder || "Select..."}
+        value=""
+        disabled
+        className="h-7 text-xs px-2"
+      />
+    );
+  }
+
+  const opts = (options as FilterOption[]) || [];
+  const selected = Array.isArray(currentFilter?.value) ? (currentFilter!.value as (string | number)[]) : [];
+
+  const toggle = (value: string | number) => {
+    const next = selected.includes(value)
+      ? selected.filter((v) => v !== value)
+      : [...selected, value];
+    onFilterChange(col.key, next.length > 0 ? { type: "multi-select", field: col.key, value: next } : null);
+  };
+
+  const triggerLabel = selected.length > 0
+    ? `${selected.length} seçili`
+    : (col.placeholder || "Select...");
+
+  return (
+    <div className="flex items-center gap-1">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs px-2 w-full justify-between font-normal"
+          >
+            <span className="truncate">{triggerLabel}</span>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+          <Command>
+            <CommandInput placeholder={col.placeholder || "Search..."} />
+            <CommandList>
+              <CommandEmpty>Sonuç yok</CommandEmpty>
+              <CommandGroup>
+                {opts.map((opt) => (
+                  <CommandItem
+                    key={String(opt.value)}
+                    value={String(opt.label)}
+                    onSelect={() => toggle(opt.value)}
+                  >
+                    <Checkbox checked={selected.includes(opt.value)} className="mr-1" />
+                    {opt.icon}
+                    {opt.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+      {selected.length > 0 && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-5 w-5 shrink-0"
+          onClick={() => onFilterChange(col.key, null)}
+        >
+          <X className="h-3 w-3" />
+        </Button>
+      )}
+    </div>
+  );
+}
 
 interface DataTableHeaderProps<T> {
   columns: Column<T>[];
@@ -139,7 +237,10 @@ function renderFilterInput(
               <SelectItem value="__clear__">...</SelectItem>
               {opts.map((opt) => (
                 <SelectItem key={String(opt.value)} value={String(opt.value)}>
-                  {opt.label}
+                  <span className="flex items-center gap-1.5">
+                    {opt.icon}
+                    {opt.label}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -160,11 +261,10 @@ function renderFilterInput(
 
     case "multi-select":
       return (
-        <Input
-          placeholder={col.placeholder || "Select..."}
-          value=""
-          disabled
-          className="h-7 text-xs px-2"
+        <MultiSelectFilter
+          col={col}
+          currentFilter={currentFilter}
+          onFilterChange={onFilterChange}
         />
       );
 
@@ -216,7 +316,6 @@ export function DataTableHeader<T>({
     <TableHeader>
       <TableRow>
         {columns.map((col) => {
-          const canFilter = col.filterable && col.filterType !== "multi-select";
           return (
             <TableHead key={col.key} className={cn(col.headerClassName)}>
               <div className="flex flex-col gap-1 m-2">
@@ -233,18 +332,10 @@ export function DataTableHeader<T>({
                   {col.label}
                   {col.sortable && renderSortIcon(col.key)}
                 </Button>
-                {canFilter && renderFilterInput(
+                {col.filterable && renderFilterInput(
                   col as Column<unknown>,
                   filterValues[col.key],
                   onFilterChange,
-                )}
-                {col.filterable && !canFilter && (
-                  <Input
-                    placeholder={col.placeholder || ""}
-                    value={""}
-                    disabled
-                    className="h-7 text-xs px-2"
-                  />
                 )}
               </div>
             </TableHead>

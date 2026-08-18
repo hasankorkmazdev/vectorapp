@@ -14,6 +14,7 @@ export interface FilterValue {
 export interface FilterOption {
   label: string;
   value: string | number;
+  icon?: ReactNode;
 }
 
 export interface Column<T> {

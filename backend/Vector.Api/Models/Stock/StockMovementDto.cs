@@ -14,10 +14,8 @@ namespace Vector.Api.Models.Stock
         public string? Currency { get; set; }
         public decimal? TotalCost { get; set; }
         public StockMovementType Type { get; set; }
-        public Guid? SupplierId { get; set; }
-        public string? SupplierName { get; set; }
-        public Guid? CustomerId { get; set; }
-        public string? CustomerName { get; set; }
+        public Guid? AccountId { get; set; }
+        public string? AccountName { get; set; }
         public Guid? WarehouseId { get; set; }
         public string? WarehouseName { get; set; }
         public string? Destination { get; set; }

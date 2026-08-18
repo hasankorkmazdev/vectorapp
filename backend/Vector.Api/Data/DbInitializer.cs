@@ -1,10 +1,10 @@
+using Vector.Api.Entities.Account;
 using Vector.Api.Entities.Auth;
 using Vector.Api.Entities.Common;
-using Vector.Api.Entities.Customer;
 using Vector.Api.Entities.Inventory;
 using Vector.Api.Entities.Organization;
 using Vector.Api.Entities.Product;
-using Vector.Api.Entities.Supplier;
+using Vector.Api.Entities.Tag;
 using Vector.Api.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -22,10 +22,10 @@ namespace Vector.Api.Data
             SeedUsers(context);
             SeedOrganizations(context);
             SeedOrganizationMembers(context);
-            SeedCustomers(context);
+            SeedTags(context);
+            SeedAccounts(context);
             SeedWarehouses(context);
             SeedProductGroups(context);
-            SeedSuppliers(context);
             SeedProducts(context);
             SeedStockMovements(context);
         }
@@ -160,12 +160,38 @@ namespace Vector.Api.Data
             context.SaveChanges();
         }
 
-        private static void SeedCustomers(ApplicationDbContext context)
+        private static void SeedTags(ApplicationDbContext context)
+        {
+            var tags = new TagEntity[]
+            {
+                new()
+                {
+                    Id = SeedConstants.TagCustomerId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Name = "Müşteri",
+                    Color = "#2563eb",
+                    CreatedAt = DateTime.UtcNow,
+                },
+                new()
+                {
+                    Id = SeedConstants.TagSupplierId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Name = "Tedarikçi",
+                    Color = "#16a34a",
+                    CreatedAt = DateTime.UtcNow,
+                }
+            };
+
+            context.AddOrUpdate(tags);
+            context.SaveChanges();
+        }
+
+        private static void SeedAccounts(ApplicationDbContext context)
         {
             var customer1Id = Guid.Parse("00000000-0000-0000-0000-000000000001");
             var customer2Id = Guid.Parse("7779e5f8-8d14-4b6e-918a-6dca8d3980fe");
 
-            var customers = new CustomerEntity[]
+            var accounts = new AccountEntity[]
             {
                 new()
                 {
@@ -192,18 +218,38 @@ namespace Vector.Api.Data
                     Email = new() { "info@akkorkalip.com" },
                     CreatedById = SeedConstants.OrganizationAdminUserId,
                     CreatedAt = DateTime.UtcNow,
+                },
+                new()
+                {
+                    Id = SeedConstants.Account3Id,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "S0001",
+                    CompanyName = "Konya Yağ Sanayi",
+                    Phone = new() { "(0332) 500 00 00" },
+                    Email = new() { "info@konyayag.com" },
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.Account4Id,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "S0002",
+                    CompanyName = "Anadolu Filtre",
+                    Phone = new() { "(0312) 400 00 00" },
+                    Email = new() { "info@anadolufiltre.com" },
+                    CreatedAt = DateTime.UtcNow
                 }
             };
 
-            context.AddOrUpdate(customers);
+            context.AddOrUpdate(accounts);
             context.SaveChanges();
 
-            var addresses = new CustomerAddressEntity[]
+            var addresses = new AccountAddressEntity[]
             {
                 new()
                 {
                     Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
-                    CustomerId = customer1Id,
+                    AccountId = customer1Id,
                     Label = "Merkez",
                     Country = "Türkiye",
                     City = "Konya",
@@ -216,7 +262,7 @@ namespace Vector.Api.Data
                 new()
                 {
                     Id = Guid.Parse("c4a8ead6-255b-4e31-b297-0648cf79d26d"),
-                    CustomerId = customer2Id,
+                    AccountId = customer2Id,
                     Label = "Fabrika Adres",
                     Country = "Türkiye",
                     City = "Konya",
@@ -231,12 +277,12 @@ namespace Vector.Api.Data
             context.AddOrUpdate(addresses);
             context.SaveChanges();
 
-            var contacts = new CustomerContactEntity[]
+            var contacts = new AccountContactEntity[]
             {
                 new()
                 {
                     Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
-                    CustomerId = customer1Id,
+                    AccountId = customer1Id,
                     FullName = "Hıfzı Korkmaz",
                     Phone = "(0332) 345 33 33",
                     IsPrimary = true,
@@ -245,7 +291,7 @@ namespace Vector.Api.Data
                 new()
                 {
                     Id = Guid.Parse("599e9835-72b8-4f9f-bb82-320b240be9cc"),
-                    CustomerId = customer2Id,
+                    AccountId = customer2Id,
                     FullName = "Omer Osman Korkmaz",
                     Title = "Şirket Sahibi",
                     Email = "omerosmankorkmaz@akkorkalip.com",
@@ -256,6 +302,17 @@ namespace Vector.Api.Data
             };
 
             context.AddOrUpdate(contacts);
+            context.SaveChanges();
+
+            var accountTags = new AccountTagEntity[]
+            {
+                new() { AccountId = customer1Id, TagId = SeedConstants.TagCustomerId },
+                new() { AccountId = customer2Id, TagId = SeedConstants.TagCustomerId },
+                new() { AccountId = SeedConstants.Account3Id, TagId = SeedConstants.TagSupplierId },
+                new() { AccountId = SeedConstants.Account4Id, TagId = SeedConstants.TagSupplierId },
+            };
+
+            context.AddOrUpdate(accountTags);
             context.SaveChanges();
         }
 
@@ -269,6 +326,16 @@ namespace Vector.Api.Data
                     OrganizationId = SeedConstants.OrganizationKBB,
                     Code = "WH001",
                     Name = "Ana Depo",
+                    Location = "Konya",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.WorkshopWarehouseId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "WH002",
+                    Name = "Atölye Deposu",
                     Location = "Konya",
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
@@ -331,36 +398,6 @@ namespace Vector.Api.Data
             };
 
             context.AddOrUpdate(groups);
-            context.SaveChanges();
-        }
-
-        private static void SeedSuppliers(ApplicationDbContext context)
-        {
-            var suppliers = new SupplierEntity[]
-            {
-                new()
-                {
-                    Id = SeedConstants.Supplier1Id,
-                    OrganizationId = SeedConstants.OrganizationKBB,
-                    Code = "SUP001",
-                    Name = "Konya Yağ Sanayi",
-                    Phone = "(0332) 500 00 00",
-                    Email = "info@konyayag.com",
-                    CreatedAt = DateTime.UtcNow
-                },
-                new()
-                {
-                    Id = SeedConstants.Supplier2Id,
-                    OrganizationId = SeedConstants.OrganizationKBB,
-                    Code = "SUP002",
-                    Name = "Anadolu Filtre",
-                    Phone = "(0312) 400 00 00",
-                    Email = "info@anadolufiltre.com",
-                    CreatedAt = DateTime.UtcNow
-                }
-            };
-
-            context.AddOrUpdate(suppliers);
             context.SaveChanges();
         }
 

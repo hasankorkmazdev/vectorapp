@@ -8,10 +8,9 @@ import { VerifyEmailPage } from "./features/auth/pages/verify-email/Index";
 import ForgotPasswordPage from "./features/auth/pages/forgot-password/Index";
 import ResetPasswordPage from "./features/auth/pages/reset-password/Index";
 import { Dashboard } from "./features/dashboard/pages/Dashboard";
-import { CustomersPage } from "./features/customers/pages/CustomersPage";
+import { AccountsPage } from "./features/account/pages/AccountsPage";
 import { VisitsPage } from "./features/visits/pages/VisitsPage";
 import { MarketingPage } from "./features/marketing/pages/MarketingPage";
-import { SuppliersPage } from "./features/suppliers/pages/SuppliersPage";
 import { StocksPage } from "./features/products/pages/ProductsPage";
 import { ProductDetailPage } from "./features/products/pages/ProductDetailPage";
 import { EditProductPage } from "./features/products/pages/EditProductPage";
@@ -42,10 +41,9 @@ function App() {
           <Route element={<PrivateLayout />}>
             <Route element={<DashboardLayout />}>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/customers" element={<CustomersPage />} />
+              <Route path="/accounts" element={<AccountsPage />} />
               <Route path="/visits" element={<VisitsPage />} />
               <Route path="/marketing" element={<MarketingPage />} />
-              <Route path="/suppliers" element={<SuppliersPage />} />
               <Route path="/products" element={<StocksPage />} />
               <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/products/:id/edit" element={<EditProductPage />} />

@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using Vector.Api.Entities.Account;
 using Vector.Api.Entities.Auth;
 using Vector.Api.Entities.Common;
-using Vector.Api.Entities.Customer;
 using Vector.Api.Entities.Inventory;
 using Vector.Api.Entities.Organization;
 using Vector.Api.Entities.Product;
-using Vector.Api.Entities.Supplier;
+using Vector.Api.Entities.Tag;
 using Vector.Api.Entities.User;
 using System;
 using System.Linq;
@@ -36,13 +36,14 @@ namespace Vector.Api.Data
         public DbSet<OrganizationEntity> Organizations => Set<OrganizationEntity>();
         public DbSet<OrganizationMemberEntity> OrganizationMembers => Set<OrganizationMemberEntity>();
         public DbSet<RefreshTokenEntity> RefreshTokens => Set<RefreshTokenEntity>();
-        public DbSet<CustomerEntity> Customers => Set<CustomerEntity>();
-        public DbSet<CustomerContactEntity> CustomerContacts => Set<CustomerContactEntity>();
-        public DbSet<CustomerAddressEntity> CustomerAddresses => Set<CustomerAddressEntity>();
+        public DbSet<AccountEntity> Accounts => Set<AccountEntity>();
+        public DbSet<AccountContactEntity> AccountContacts => Set<AccountContactEntity>();
+        public DbSet<AccountAddressEntity> AccountAddresses => Set<AccountAddressEntity>();
+        public DbSet<TagEntity> Tags => Set<TagEntity>();
+        public DbSet<AccountTagEntity> AccountTagLinks => Set<AccountTagEntity>();
         public DbSet<ProductEntity> Products => Set<ProductEntity>();
         public DbSet<BomItemEntity> BomItems => Set<BomItemEntity>();
         public DbSet<StockMovementEntity> StockMovements => Set<StockMovementEntity>();
-        public DbSet<SupplierEntity> Suppliers => Set<SupplierEntity>();
         public DbSet<WarehouseEntity> Warehouses => Set<WarehouseEntity>();
         public DbSet<ProductGroupEntity> ProductGroups => Set<ProductGroupEntity>();
 
@@ -54,13 +55,13 @@ namespace Vector.Api.Data
             {
                 var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-                modelBuilder.Entity<CustomerEntity>()
+                modelBuilder.Entity<AccountEntity>()
                     .Property(c => c.Phone)
                     .HasConversion(
                         v => JsonSerializer.Serialize(v, jsonOptions),
                         v => JsonSerializer.Deserialize<List<string>>(v, jsonOptions) ?? new());
 
-                modelBuilder.Entity<CustomerEntity>()
+                modelBuilder.Entity<AccountEntity>()
                     .Property(c => c.Email)
                     .HasConversion(
                         v => JsonSerializer.Serialize(v, jsonOptions),
@@ -82,13 +83,14 @@ namespace Vector.Api.Data
             modelBuilder.Entity<OrganizationEntity>().ToTable("Organizations");
             modelBuilder.Entity<RefreshTokenEntity>().ToTable("RefreshTokens");
             modelBuilder.Entity<OrganizationMemberEntity>().ToTable("OrganizationMembers");
-            modelBuilder.Entity<CustomerEntity>().ToTable("Customers");
-            modelBuilder.Entity<CustomerContactEntity>().ToTable("CustomerContacts");
-            modelBuilder.Entity<CustomerAddressEntity>().ToTable("CustomerAddresses");
+            modelBuilder.Entity<AccountEntity>().ToTable("Accounts");
+            modelBuilder.Entity<AccountContactEntity>().ToTable("AccountContacts");
+            modelBuilder.Entity<AccountAddressEntity>().ToTable("AccountAddresses");
+            modelBuilder.Entity<TagEntity>().ToTable("Tags");
+            modelBuilder.Entity<AccountTagEntity>().ToTable("AccountTags");
             modelBuilder.Entity<ProductEntity>().ToTable("Products");
             modelBuilder.Entity<BomItemEntity>().ToTable("BomItems");
             modelBuilder.Entity<StockMovementEntity>().ToTable("StockMovements");
-            modelBuilder.Entity<SupplierEntity>().ToTable("Suppliers");
             modelBuilder.Entity<WarehouseEntity>().ToTable("Warehouses");
             modelBuilder.Entity<ProductGroupEntity>().ToTable("ProductGroups");
 
@@ -96,16 +98,19 @@ namespace Vector.Api.Data
             modelBuilder.Entity<RolePermissionEntity>()
                 .HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
+            modelBuilder.Entity<AccountTagEntity>()
+                .HasKey(at => new { at.AccountId, at.TagId });
+
             // Global Query Filters for Soft Delete
             modelBuilder.Entity<UserEntity>().HasQueryFilter(u => u.DeletedAt == null);
             modelBuilder.Entity<OrganizationEntity>().HasQueryFilter(o => o.DeletedAt == null);
             modelBuilder.Entity<OrganizationMemberEntity>().HasQueryFilter(om => om.DeletedAt == null);
-            modelBuilder.Entity<CustomerEntity>().HasQueryFilter(c => c.DeletedAt == null);
-            modelBuilder.Entity<CustomerContactEntity>().HasQueryFilter(co => co.DeletedAt == null);
-            modelBuilder.Entity<CustomerAddressEntity>().HasQueryFilter(a => a.DeletedAt == null);
+            modelBuilder.Entity<AccountEntity>().HasQueryFilter(c => c.DeletedAt == null);
+            modelBuilder.Entity<AccountContactEntity>().HasQueryFilter(co => co.DeletedAt == null);
+            modelBuilder.Entity<AccountAddressEntity>().HasQueryFilter(a => a.DeletedAt == null);
+            modelBuilder.Entity<TagEntity>().HasQueryFilter(t => t.DeletedAt == null);
             modelBuilder.Entity<ProductEntity>().HasQueryFilter(p => p.DeletedAt == null);
             modelBuilder.Entity<BomItemEntity>().HasQueryFilter(b => b.DeletedAt == null);
-            modelBuilder.Entity<SupplierEntity>().HasQueryFilter(s => s.DeletedAt == null);
             modelBuilder.Entity<WarehouseEntity>().HasQueryFilter(w => w.DeletedAt == null);
             modelBuilder.Entity<ProductGroupEntity>().HasQueryFilter(g => g.DeletedAt == null);
 
@@ -138,24 +143,39 @@ namespace Vector.Api.Data
                 .HasForeignKey(om => om.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<CustomerEntity>()
+            modelBuilder.Entity<AccountEntity>()
                 .HasIndex(c => c.OrganizationId);
 
-            modelBuilder.Entity<CustomerEntity>()
+            modelBuilder.Entity<AccountEntity>()
                 .HasIndex(c => new { c.OrganizationId, c.Code })
                 .IsUnique();
 
-            modelBuilder.Entity<CustomerContactEntity>()
-                .HasOne(co => co.Customer)
+            modelBuilder.Entity<AccountContactEntity>()
+                .HasOne(co => co.Account)
                 .WithMany(c => c.Contacts)
-                .HasForeignKey(co => co.CustomerId)
+                .HasForeignKey(co => co.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<CustomerAddressEntity>()
-                .HasOne(a => a.Customer)
+            modelBuilder.Entity<AccountAddressEntity>()
+                .HasOne(a => a.Account)
                 .WithMany(c => c.Addresses)
-                .HasForeignKey(a => a.CustomerId)
+                .HasForeignKey(a => a.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AccountTagEntity>()
+                .HasOne(at => at.Account)
+                .WithMany(a => a.AccountTags)
+                .HasForeignKey(at => at.AccountId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AccountTagEntity>()
+                .HasOne(at => at.Tag)
+                .WithMany(t => t.AccountTags)
+                .HasForeignKey(at => at.TagId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TagEntity>()
+                .HasIndex(t => t.OrganizationId);
 
             // Product indexes
             modelBuilder.Entity<ProductEntity>()
@@ -181,14 +201,6 @@ namespace Vector.Api.Data
             modelBuilder.Entity<BomItemEntity>()
                 .HasIndex(b => b.OrganizationId);
 
-            // Supplier indexes
-            modelBuilder.Entity<SupplierEntity>()
-                .HasIndex(s => s.OrganizationId);
-
-            modelBuilder.Entity<SupplierEntity>()
-                .HasIndex(s => new { s.OrganizationId, s.Code })
-                .IsUnique();
-
             // StockMovement relationships
             modelBuilder.Entity<StockMovementEntity>()
                 .HasOne(m => m.Product)
@@ -203,21 +215,15 @@ namespace Vector.Api.Data
                 .HasIndex(m => m.ProductId);
 
             modelBuilder.Entity<StockMovementEntity>()
-                .HasOne(m => m.Supplier)
-                .WithMany()
-                .HasForeignKey(m => m.SupplierId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<StockMovementEntity>()
                 .HasOne(m => m.Warehouse)
                 .WithMany()
                 .HasForeignKey(m => m.WarehouseId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<StockMovementEntity>()
-                .HasOne(m => m.Customer)
+                .HasOne(m => m.Account)
                 .WithMany()
-                .HasForeignKey(m => m.CustomerId)
+                .HasForeignKey(m => m.AccountId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             // Warehouse indexes

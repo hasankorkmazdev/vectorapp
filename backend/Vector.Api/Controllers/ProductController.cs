@@ -147,8 +147,10 @@ namespace Vector.Api.Controllers
         {
             var userId = this.GetUserId();
             var orgId = this.GetOrganizationId();
-            var movement = await _productService.StockOutAsync(orgId, userId, productId, request);
-            return Ok(Result<StockMovementDto>.Success(movement, "Stock out recorded successfully.", 201));
+            var result = await _productService.StockOutAsync(orgId, userId, productId, request);
+            if (result.Error)
+                return BadRequest(result);
+            return Ok(Result<StockMovementDto>.Success(result.Data!, "Stock out recorded successfully.", 201));
         }
 
         [HttpPost("{productId}/stock-adjust")]

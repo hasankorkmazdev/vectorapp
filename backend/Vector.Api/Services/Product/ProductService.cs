@@ -4,10 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Vector.Api.Data;
-using Vector.Api.Entities.Customer;
 using Vector.Api.Entities.Inventory;
 using Vector.Api.Entities.Product;
-using Vector.Api.Entities.Supplier;
+using Vector.Api.Models.Common;
 using Vector.Api.Models.Product;
 using Vector.Api.Models.Stock;
 
@@ -351,10 +350,8 @@ namespace Vector.Api.Services.Product
                     Currency = m.Currency,
                     TotalCost = m.TotalCost,
                     Type = m.Type,
-                    SupplierId = m.SupplierId,
-                    SupplierName = m.Supplier != null ? m.Supplier.Name : null,
-                    CustomerId = m.CustomerId,
-                    CustomerName = m.Customer != null ? m.Customer.CompanyName : null,
+                    AccountId = m.AccountId,
+                    AccountName = m.Account != null ? m.Account.CompanyName : null,
                     WarehouseId = m.WarehouseId,
                     WarehouseName = m.Warehouse != null ? m.Warehouse.Name : null,
                     Destination = m.Destination,
@@ -407,7 +404,7 @@ namespace Vector.Api.Services.Product
                 TotalCost = request.UnitCost.HasValue ? request.Quantity * request.UnitCost.Value : null,
                 Currency = request.Currency,
                 Type = StockMovementType.In,
-                SupplierId = request.SupplierId,
+                AccountId = request.AccountId,
                 WarehouseId = request.WarehouseId,
                 Note = request.Note,
                 CreatedById = userId
@@ -420,16 +417,16 @@ namespace Vector.Api.Services.Product
                 .FirstAsync(m => m.Id == movement.Id))!;
         }
 
-        public async Task<StockMovementDto> StockOutAsync(Guid organizationId, Guid userId, Guid productId, StockOutRequest request)
+        public async Task<Result<StockMovementDto>> StockOutAsync(Guid organizationId, Guid userId, Guid productId, StockOutRequest request)
         {
             var product = await _context.Products
                 .FirstOrDefaultAsync(p => p.OrganizationId == organizationId && p.Id == productId);
 
             if (product == null)
-                throw new InvalidOperationException("Product not found.");
+                return Result<StockMovementDto>.Failure("Product not found.", 404);
 
             if (product.StockQuantity < request.Quantity)
-                throw new InvalidOperationException($"Insufficient stock. Available: {product.StockQuantity}");
+                return Result<StockMovementDto>.Failure($"Insufficient stock for '{product.Name}'. Requested: {request.Quantity}, Available: {product.StockQuantity}", 400);
 
             product.StockQuantity -= request.Quantity;
             product.UpdatedById = userId;
@@ -445,7 +442,7 @@ namespace Vector.Api.Services.Product
                 UnitCost = unitCost,
                 TotalCost = unitCost.HasValue ? request.Quantity * unitCost.Value : null,
                 Type = StockMovementType.Out,
-                CustomerId = request.CustomerId,
+                AccountId = request.AccountId,
                 Destination = request.Destination,
                 Note = request.Note,
                 CreatedById = userId
@@ -454,8 +451,9 @@ namespace Vector.Api.Services.Product
             _context.StockMovements.Add(movement);
             await _context.SaveChangesAsync();
 
-            return (await GetStockMovementsQueryable(organizationId, productId)
+            var created = (await GetStockMovementsQueryable(organizationId, productId)
                 .FirstAsync(m => m.Id == movement.Id))!;
+            return Result<StockMovementDto>.Success(created);
         }
 
         public async Task<StockMovementDto> StockAdjustAsync(Guid organizationId, Guid userId, Guid productId, StockAdjustRequest request)

@@ -21,6 +21,7 @@ namespace Vector.Api.Data
 
         // Warehouse IDs
         public static readonly Guid DefaultWarehouseId = Guid.Parse("00000000-0000-0000-0000-000000000040");
+        public static readonly Guid WorkshopWarehouseId = Guid.Parse("00000000-0000-0000-0000-000000000041");
 
         // Product Group IDs
         public static readonly Guid ProductGroupOilId = Guid.Parse("00000000-0000-0000-0000-000000000050");
@@ -29,9 +30,13 @@ namespace Vector.Api.Data
         public static readonly Guid ProductGroupHydraulicId = Guid.Parse("00000000-0000-0000-0000-000000000053");
         public static readonly Guid ProductGroupElectricalId = Guid.Parse("00000000-0000-0000-0000-000000000054");
 
-        // Supplier IDs
-        public static readonly Guid Supplier1Id = Guid.Parse("00000000-0000-0000-0000-000000000060");
-        public static readonly Guid Supplier2Id = Guid.Parse("00000000-0000-0000-0000-000000000061");
+        // Account IDs (former suppliers)
+        public static readonly Guid Account3Id = Guid.Parse("00000000-0000-0000-0000-000000000060");
+        public static readonly Guid Account4Id = Guid.Parse("00000000-0000-0000-0000-000000000061");
+
+        // Tag IDs
+        public static readonly Guid TagCustomerId = Guid.Parse("00000000-0000-0000-0000-000000000080");
+        public static readonly Guid TagSupplierId = Guid.Parse("00000000-0000-0000-0000-000000000081");
 
         // Product IDs
         public static readonly Guid ProductOilId = Guid.Parse("00000000-0000-0000-0000-000000000070");

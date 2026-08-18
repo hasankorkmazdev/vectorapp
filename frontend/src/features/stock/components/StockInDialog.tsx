@@ -32,8 +32,10 @@ import {
 } from "@/components/ui/select";
 import { Check, X } from "lucide-react";
 import { stockService, type Warehouse } from "@/features/stock/services/stock-service";
-import { supplierService } from "@/features/suppliers/services/supplier-service";
-import type { Supplier } from "@/features/suppliers/types";
+import { accountService } from "@/features/account/services/account-service";
+import type { Account } from "@/features/account/types";
+
+const SUPPLIER_TAG_NAME = "Tedarikçi";
 
 interface Props {
   productId: string;
@@ -46,7 +48,7 @@ const formSchema = z.object({
   unitCost: z.number().min(0).optional(),
   currency: z.string().min(1),
   warehouseId: z.string().min(1),
-  supplierId: z.string().optional(),
+  accountId: z.string().optional(),
   note: z.string().max(500).optional(),
 });
 
@@ -54,12 +56,12 @@ const SELLING_CURRENCIES = ["TRY", "USD", "EUR"];
 
 export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Props) {
   const { t } = useTranslation();
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [suppliers, setSuppliers] = useState<Account[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { unitCost: undefined, currency: "TRY", warehouseId: "", supplierId: undefined, note: "" },
+    defaultValues: { unitCost: undefined, currency: "TRY", warehouseId: "", accountId: undefined, note: "" },
   });
 
   const [quantityStr, setQuantityStr] = useState("1");
@@ -67,7 +69,7 @@ export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Prop
   useEffect(() => {
     if (!open) return;
     const controller = new AbortController();
-    supplierService.getAll(controller.signal)
+    accountService.getByTag(SUPPLIER_TAG_NAME, controller.signal)
       .then(setSuppliers)
       .catch(() => {});
     stockService.getWarehouses(controller.signal)
@@ -85,7 +87,7 @@ export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Prop
         unitCost: values.unitCost || undefined,
         currency: values.currency,
         warehouseId: values.warehouseId,
-        supplierId: values.supplierId || undefined,
+        accountId: values.accountId || undefined,
         note: values.note || undefined,
       });
       toast.success(t("stock.stockInSuccess"));
@@ -103,7 +105,7 @@ export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Prop
 
   const resetForm = () => {
     setQuantityStr("1");
-    form.reset({ unitCost: undefined, currency: "TRY", warehouseId: "", supplierId: undefined, note: "" });
+    form.reset({ unitCost: undefined, currency: "TRY", warehouseId: "", accountId: undefined, note: "" });
     onOpenChange(false);
   };
 
@@ -193,7 +195,7 @@ export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Prop
             />
             <FormField
               control={form.control}
-              name="supplierId"
+              name="accountId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("stock.supplier")}</FormLabel>
@@ -210,7 +212,7 @@ export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Prop
                       <SelectItem value="__none__">{t("stock.supplierNone")}</SelectItem>
                       {suppliers.map((s) => (
                         <SelectItem key={s.id} value={s.id}>
-                          {s.code} - {s.name}
+                          {s.code} - {s.companyName}
                         </SelectItem>
                       ))}
                     </SelectContent>

@@ -10,15 +10,15 @@ using Vector.Api.Models.Stock;
 using Vector.Api.Services.Auth;
 using Vector.Api.Services.Infrastructure;
 using Vector.Api.Services.Organization;
-using Vector.Api.Services.Customer;
+using Vector.Api.Services.Account;
 using Vector.Api.Services.Product;
 using Vector.Api.Services.ProductGroup;
-using Vector.Api.Services.Supplier;
+using Vector.Api.Services.Tag;
 using Vector.Api.Services.Warehouse;
 using Vector.Api.Models.Common;
-using Vector.Api.Models.Customer;
+using Vector.Api.Models.Account;
 using Vector.Api.Models.Product;
-using Vector.Api.Models.Supplier;
+using Vector.Api.Models.Tag;
 using Vector.Api.Models.Auth;
 using FluentValidation;
 using System.Text;
@@ -35,9 +35,9 @@ app.Run();
 static void ConfigureServices(WebApplicationBuilder builder)
 {
     var modelBuilder = new ODataConventionModelBuilder();
-    modelBuilder.EntitySet<CustomerListDto>("Customers");
+    modelBuilder.EntitySet<AccountListDto>("Accounts");
     modelBuilder.EntitySet<ProductListDto>("Products");
-    modelBuilder.EntitySet<SupplierListDto>("Suppliers");
+    modelBuilder.EntitySet<TagDto>("Tags");
     modelBuilder.EntitySet<StockMovementDto>("StockMovements");
 
     var edmModel = modelBuilder.GetEdmModel();
@@ -72,10 +72,10 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<ITokenService, TokenService>();
     builder.Services.AddScoped<ICaptchaService, CaptchaService>();
     builder.Services.AddScoped<IOrganizationService, OrganizationService>();
-    builder.Services.AddScoped<ICustomerService, CustomerService>();
+    builder.Services.AddScoped<IAccountService, AccountService>();
     builder.Services.AddScoped<IProductService, ProductService>();
     builder.Services.AddScoped<IProductGroupService, ProductGroupService>();
-    builder.Services.AddScoped<ISupplierService, SupplierService>();
+    builder.Services.AddScoped<ITagService, TagService>();
     builder.Services.AddScoped<IWarehouseService, WarehouseService>();
     builder.Services.AddHttpClient();
 

@@ -1,7 +1,6 @@
 using System;
-using Vector.Api.Entities.Customer;
+using Vector.Api.Entities.Account;
 using Vector.Api.Entities.Product;
-using Vector.Api.Entities.Supplier;
 
 namespace Vector.Api.Entities.Inventory
 {
@@ -15,8 +14,7 @@ namespace Vector.Api.Entities.Inventory
         public string? Currency { get; set; }
         public decimal? TotalCost { get; set; }
         public StockMovementType Type { get; set; }
-        public Guid? SupplierId { get; set; }
-        public Guid? CustomerId { get; set; }
+        public Guid? AccountId { get; set; }
         public Guid? WarehouseId { get; set; }
         public string? Destination { get; set; }
         public string? Note { get; set; }
@@ -24,8 +22,7 @@ namespace Vector.Api.Entities.Inventory
         public Guid? CreatedById { get; set; }
 
         public ProductEntity? Product { get; set; }
-        public SupplierEntity? Supplier { get; set; }
-        public CustomerEntity? Customer { get; set; }
+        public AccountEntity? Account { get; set; }
         public WarehouseEntity? Warehouse { get; set; }
     }
 }

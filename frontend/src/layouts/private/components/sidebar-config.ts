@@ -3,7 +3,6 @@ import {
   Users,
   CalendarCheck,
   Megaphone,
-  Truck,
   Package,
   Monitor,
   TrendingUp,
@@ -45,11 +44,11 @@ export const getNavigation = (t: any): NavigationConfig => ({
       ],
     },
     {
-      groupLabel: t("sidebar.customers"),
+      groupLabel: t("sidebar.accounts"),
       items: [
         {
-          title: t("sidebar.customersList"),
-          url: "/customers",
+          title: t("sidebar.accountsList"),
+          url: "/accounts",
           icon: Users,
         },
         {
@@ -61,16 +60,6 @@ export const getNavigation = (t: any): NavigationConfig => ({
           title: t("sidebar.marketing"),
           url: "/marketing",
           icon: Megaphone,
-        },
-      ],
-    },
-    {
-      groupLabel: t("sidebar.suppliers"),
-      items: [
-        {
-          title: t("sidebar.suppliersList"),
-          url: "/suppliers",
-          icon: Truck,
         },
       ],
     },

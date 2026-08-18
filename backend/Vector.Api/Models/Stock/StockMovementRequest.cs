@@ -7,7 +7,7 @@ namespace Vector.Api.Models.Stock
         public decimal Quantity { get; set; }
         public decimal? UnitCost { get; set; }
         public string? Currency { get; set; }
-        public Guid? SupplierId { get; set; }
+        public Guid? AccountId { get; set; }
         public Guid? WarehouseId { get; set; }
         public string? Note { get; set; }
     }
@@ -25,7 +25,7 @@ namespace Vector.Api.Models.Stock
     public class StockOutRequest
     {
         public decimal Quantity { get; set; }
-        public Guid? CustomerId { get; set; }
+        public Guid? AccountId { get; set; }
         public string? Destination { get; set; }
         public string? Note { get; set; }
     }
