@@ -12,12 +12,17 @@ namespace Vector.Api.Data
 
         // Permission IDs
         public static readonly Guid SuperAdminPermissionId = Guid.Parse("00000000-0000-0000-0000-000000000090");
+        public static readonly Guid MaintenanceViewPermissionId = Guid.Parse("00000000-0000-0000-0000-000000000091");
+        public static readonly Guid MaintenanceManagePermissionId = Guid.Parse("00000000-0000-0000-0000-000000000092");
+        public static readonly Guid MaintenanceCostViewPermissionId = Guid.Parse("00000000-0000-0000-0000-000000000093");
 
         // User IDs
         public static readonly Guid AdminUserId = Guid.Parse("00000000-0000-0000-0000-000000000020");
         public static readonly Guid hasankorkmazdevId = Guid.Parse("00000000-0000-0000-0000-000000000021");
         public static readonly Guid OrganizationAdminUserId = Guid.Parse("00000000-0000-0000-0000-000000000022");
         public static readonly Guid UnassociatedOrganizationAdminUserId = Guid.Parse("00000000-0000-0000-0000-000000000023");
+        public static readonly Guid MechanicUserId = Guid.Parse("00000000-0000-0000-0000-000000000024");
+        public static readonly Guid FinanceUserId = Guid.Parse("00000000-0000-0000-0000-000000000025");
 
         // Organization IDs
         public static readonly Guid OrganizationKBB = Guid.Parse("00000000-0000-0000-0000-000000000030");

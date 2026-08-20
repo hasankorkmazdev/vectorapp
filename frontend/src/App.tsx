@@ -21,6 +21,10 @@ import { IncomingInvoicesPage } from "./features/accounting/pages/IncomingInvoic
 import { OutgoingInvoicesPage } from "./features/accounting/pages/OutgoingInvoicesPage";
 import { OrganizationSetupPage } from "./features/organization/pages/organization-setup/Index";
 import { SettingsPage } from "./features/settings/pages/Settings";
+import { EquipmentsPage } from "./features/maintenance/pages/EquipmentsPage";
+import { EquipmentDetailPage } from "./features/maintenance/pages/EquipmentDetailPage";
+import { WorkOrdersPage } from "./features/maintenance/pages/WorkOrdersPage";
+import { WorkOrderDetailPage } from "./features/maintenance/pages/WorkOrderDetailPage";
 import { Toaster } from "sonner";
 
 function App() {
@@ -52,6 +56,10 @@ function App() {
               <Route path="/accounting/expense" element={<ExpensePage />} />
               <Route path="/accounting/invoices/incoming" element={<IncomingInvoicesPage />} />
               <Route path="/accounting/invoices/outgoing" element={<OutgoingInvoicesPage />} />
+              <Route path="/equipment" element={<EquipmentsPage />} />
+              <Route path="/equipment/:id" element={<EquipmentDetailPage />} />
+              <Route path="/maintenance" element={<WorkOrdersPage />} />
+              <Route path="/maintenance/:id" element={<WorkOrderDetailPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>
             <Route element={<SetupLayout />}>

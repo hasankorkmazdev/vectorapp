@@ -35,6 +35,9 @@ namespace Vector.Api.Data
             var permissions = new PermissionEntity[]
             {
                 new() { Id = SeedConstants.SuperAdminPermissionId, Name = "super.admin" },
+                new() { Id = SeedConstants.MaintenanceViewPermissionId, Name = "maintenance.view" },
+                new() { Id = SeedConstants.MaintenanceManagePermissionId, Name = "maintenance.manage" },
+                new() { Id = SeedConstants.MaintenanceCostViewPermissionId, Name = "maintenance.cost.view" },
             };
 
             if (permissions.Length > 0)
@@ -63,6 +66,8 @@ namespace Vector.Api.Data
             var rolePermissions = new RolePermissionEntity[]
             {
                 new() { RoleId = SeedConstants.OrganizationAdminRoleId, PermissionId = SeedConstants.SuperAdminPermissionId },
+                new() { RoleId = SeedConstants.MechanicRoleId, PermissionId = SeedConstants.MaintenanceViewPermissionId },
+                new() { RoleId = SeedConstants.MechanicRoleId, PermissionId = SeedConstants.MaintenanceManagePermissionId },
             };
 
             context.AddOrUpdate(rolePermissions);
@@ -115,6 +120,26 @@ namespace Vector.Api.Data
                     IsEmailVerified = true,
                     IsPhoneVerified = true,
                     CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.MechanicUserId,
+                    FullName = "Test Teknisyen",
+                    Email = "teknisyen@vector.com",
+                    PasswordHash = hashedPwd,
+                    IsEmailVerified = true,
+                    IsPhoneVerified = true,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.FinanceUserId,
+                    FullName = "Test Finans",
+                    Email = "finans@vector.com",
+                    PasswordHash = hashedPwd,
+                    IsEmailVerified = true,
+                    IsPhoneVerified = true,
+                    CreatedAt = DateTime.UtcNow
                 }
             };
 
@@ -161,6 +186,22 @@ namespace Vector.Api.Data
                     OrganizationId = SeedConstants.OrganizationKBB,
                     UserId = SeedConstants.hasankorkmazdevId,
                     RoleId = SeedConstants.OrganizationAdminRoleId,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = Guid.Parse("00000000-0000-0000-0000-000000000024"),
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    UserId = SeedConstants.MechanicUserId,
+                    RoleId = SeedConstants.MechanicRoleId,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = Guid.Parse("00000000-0000-0000-0000-000000000025"),
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    UserId = SeedConstants.FinanceUserId,
+                    RoleId = SeedConstants.FinanceRoleId,
                     CreatedAt = DateTime.UtcNow
                 },
             };

@@ -4,6 +4,7 @@ using Vector.Api.Entities.Account;
 using Vector.Api.Entities.Auth;
 using Vector.Api.Entities.Common;
 using Vector.Api.Entities.Inventory;
+using Vector.Api.Entities.Maintenance;
 using Vector.Api.Entities.Organization;
 using Vector.Api.Entities.Product;
 using Vector.Api.Entities.Tag;
@@ -46,6 +47,10 @@ namespace Vector.Api.Data
         public DbSet<StockMovementEntity> StockMovements => Set<StockMovementEntity>();
         public DbSet<WarehouseEntity> Warehouses => Set<WarehouseEntity>();
         public DbSet<ProductGroupEntity> ProductGroups => Set<ProductGroupEntity>();
+        public DbSet<EquipmentEntity> Equipment => Set<EquipmentEntity>();
+        public DbSet<MaintenanceWorkOrderEntity> MaintenanceWorkOrders => Set<MaintenanceWorkOrderEntity>();
+        public DbSet<MaintenanceWorkOrderItemEntity> MaintenanceWorkOrderItems => Set<MaintenanceWorkOrderItemEntity>();
+        public DbSet<MaintenanceNoteEntity> MaintenanceNotes => Set<MaintenanceNoteEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -93,6 +98,10 @@ namespace Vector.Api.Data
             modelBuilder.Entity<StockMovementEntity>().ToTable("StockMovements");
             modelBuilder.Entity<WarehouseEntity>().ToTable("Warehouses");
             modelBuilder.Entity<ProductGroupEntity>().ToTable("ProductGroups");
+            modelBuilder.Entity<EquipmentEntity>().ToTable("Equipment");
+            modelBuilder.Entity<MaintenanceWorkOrderEntity>().ToTable("MaintenanceWorkOrders");
+            modelBuilder.Entity<MaintenanceWorkOrderItemEntity>().ToTable("MaintenanceWorkOrderItems");
+            modelBuilder.Entity<MaintenanceNoteEntity>().ToTable("MaintenanceNotes");
 
             // Composite keys
             modelBuilder.Entity<RolePermissionEntity>()
@@ -113,6 +122,7 @@ namespace Vector.Api.Data
             modelBuilder.Entity<BomItemEntity>().HasQueryFilter(b => b.DeletedAt == null);
             modelBuilder.Entity<WarehouseEntity>().HasQueryFilter(w => w.DeletedAt == null);
             modelBuilder.Entity<ProductGroupEntity>().HasQueryFilter(g => g.DeletedAt == null);
+            modelBuilder.Entity<EquipmentEntity>().HasQueryFilter(e => e.DeletedAt == null);
 
             // Relations
             modelBuilder.Entity<OrganizationMemberEntity>()
@@ -233,6 +243,98 @@ namespace Vector.Api.Data
             modelBuilder.Entity<WarehouseEntity>()
                 .HasIndex(w => new { w.OrganizationId, w.Code })
                 .IsUnique();
+
+            // Equipment relationships
+            modelBuilder.Entity<EquipmentEntity>()
+                .HasOne(e => e.Account)
+                .WithMany()
+                .HasForeignKey(e => e.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<EquipmentEntity>()
+                .HasOne(e => e.Product)
+                .WithMany()
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<EquipmentEntity>()
+                .HasIndex(e => e.OrganizationId);
+
+            modelBuilder.Entity<EquipmentEntity>()
+                .HasIndex(e => new { e.OrganizationId, e.AccountId });
+
+            // MaintenanceWorkOrder relationships
+            modelBuilder.Entity<MaintenanceWorkOrderEntity>()
+                .HasOne(w => w.Equipment)
+                .WithMany()
+                .HasForeignKey(w => w.EquipmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MaintenanceWorkOrderEntity>()
+                .HasOne(w => w.Account)
+                .WithMany()
+                .HasForeignKey(w => w.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MaintenanceWorkOrderEntity>()
+                .HasOne(w => w.AssignedToUser)
+                .WithMany()
+                .HasForeignKey(w => w.AssignedToUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<MaintenanceWorkOrderEntity>()
+                .HasIndex(w => w.OrganizationId);
+
+            modelBuilder.Entity<MaintenanceWorkOrderEntity>()
+                .HasIndex(w => new { w.OrganizationId, w.Status });
+
+            modelBuilder.Entity<MaintenanceWorkOrderEntity>()
+                .HasIndex(w => new { w.OrganizationId, w.EquipmentId });
+
+            // MaintenanceWorkOrderItem relationships
+            modelBuilder.Entity<MaintenanceWorkOrderItemEntity>()
+                .HasOne(i => i.WorkOrder)
+                .WithMany(w => w.Items)
+                .HasForeignKey(i => i.WorkOrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MaintenanceWorkOrderItemEntity>()
+                .HasOne(i => i.Product)
+                .WithMany()
+                .HasForeignKey(i => i.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MaintenanceWorkOrderItemEntity>()
+                .HasOne(i => i.StockMovement)
+                .WithMany()
+                .HasForeignKey(i => i.StockMovementId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<MaintenanceWorkOrderItemEntity>()
+                .HasIndex(i => i.WorkOrderId);
+
+            // MaintenanceNote relationships
+            modelBuilder.Entity<MaintenanceNoteEntity>()
+                .HasOne(n => n.WorkOrder)
+                .WithMany(w => w.Notes)
+                .HasForeignKey(n => n.WorkOrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MaintenanceNoteEntity>()
+                .HasOne(n => n.CreatedBy)
+                .WithMany()
+                .HasForeignKey(n => n.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MaintenanceNoteEntity>()
+                .HasIndex(n => n.WorkOrderId);
+
+            // StockMovement -> MaintenanceWorkOrder link
+            modelBuilder.Entity<StockMovementEntity>()
+                .HasOne<MaintenanceWorkOrderEntity>()
+                .WithMany()
+                .HasForeignKey(m => m.WorkOrderId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // AutoIncludes for User roles & permissions
             modelBuilder.Entity<RoleEntity>()

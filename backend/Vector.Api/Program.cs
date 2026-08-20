@@ -15,6 +15,7 @@ using Vector.Api.Services.Product;
 using Vector.Api.Services.ProductGroup;
 using Vector.Api.Services.Tag;
 using Vector.Api.Services.Warehouse;
+using Vector.Api.Services.Maintenance;
 using Vector.Api.Models.Common;
 using Vector.Api.Models.Account;
 using Vector.Api.Models.Product;
@@ -77,6 +78,9 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IProductGroupService, ProductGroupService>();
     builder.Services.AddScoped<ITagService, TagService>();
     builder.Services.AddScoped<IWarehouseService, WarehouseService>();
+    builder.Services.AddScoped<ICurrentUserPermissionService, CurrentUserPermissionService>();
+    builder.Services.AddScoped<IEquipmentService, EquipmentService>();
+    builder.Services.AddScoped<IMaintenanceWorkOrderService, MaintenanceWorkOrderService>();
     builder.Services.AddHttpClient();
 
     builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();

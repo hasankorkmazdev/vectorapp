@@ -16,6 +16,7 @@ namespace Vector.Api.Entities.Inventory
         public StockMovementType Type { get; set; }
         public Guid? AccountId { get; set; }
         public Guid? WarehouseId { get; set; }
+        public Guid? WorkOrderId { get; set; }
         public string? Destination { get; set; }
         public string? Note { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

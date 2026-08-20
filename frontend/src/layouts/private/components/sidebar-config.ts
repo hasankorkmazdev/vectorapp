@@ -9,6 +9,8 @@ import {
   TrendingDown,
   FileDown,
   FileUp,
+  Wrench,
+  ClipboardList,
 } from "lucide-react";
 
 export interface NavItem {
@@ -70,6 +72,21 @@ export const getNavigation = (t: any): NavigationConfig => ({
           title: t("sidebar.stocksList"),
           url: "/products",
           icon: Package,
+        },
+      ],
+    },
+    {
+      groupLabel: t("sidebar.maintenanceGroup"),
+      items: [
+        {
+          title: t("sidebar.equipmentList"),
+          url: "/equipment",
+          icon: Wrench,
+        },
+        {
+          title: t("sidebar.workOrders"),
+          url: "/maintenance",
+          icon: ClipboardList,
         },
       ],
     },
