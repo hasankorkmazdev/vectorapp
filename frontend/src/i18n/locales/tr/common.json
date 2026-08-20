@@ -161,6 +161,10 @@
     "productsEmpty": "Bu cariye ait ürün bulunmamaktadır."
   },
   "validation": {
+    "required": "Bu alan zorunludur.",
+    "email": "Geçerli bir e-posta adresi girin.",
+    "passwordLength": "Şifre en az 8 karakter olmalıdır.",
+    "passwordMismatch": "Şifreler eşleşmiyor.",
     "invalidPhone": "Geçerli bir telefon numarası girin.",
     "invalidEmail": "Geçerli bir e-posta adresi girin.",
     "onlyDigits": "Yalnızca rakam girilebilir."

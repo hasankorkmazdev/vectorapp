@@ -4,6 +4,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Building2, FileText, Landmark, Phone, Mail, Pencil, XCircle, CheckCircle } from "lucide-react";
+import { FieldDescription } from "@/components/field-description";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -262,44 +263,46 @@ export function AccountDialog({ open, onOpenChange, onSuccess, accountId }: Acco
                     <div className="space-y-2">
                       <Label>{t("accounts.tags")}</Label>
                       <TagSelector value={tagIds} onChange={setTagIds} />
-                      <p className="text-[0.8rem] text-muted-foreground">{t("accounts.tagsDescription")}</p>
+                      <FieldDescription>{t("accounts.tagsDescription")}</FieldDescription>
                     </div>
 
-                    <TagInput
-                      label={t("accounts.phone")}
-                      placeholder={t("accounts.phonePlaceholder")}
-                      description={t("accounts.phoneDescription")}
-                      icon={<Phone className="h-4 w-4" />}
-                      values={form.watch("phone")}
-                      onAdd={(items) => {
-                        const current = form.getValues("phone");
-                        form.setValue("phone", [...current, ...items]);
-                      }}
-                      onRemove={(index) => {
-                        const current = form.getValues("phone");
-                        form.setValue("phone", current.filter((_, i) => i !== index));
-                      }}
-                      regex={phoneRegex}
-                      invalidMessage={t("validation.invalidPhone")}
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <TagInput
+                        label={t("accounts.phone")}
+                        placeholder={t("accounts.phonePlaceholder")}
+                        description={t("accounts.phoneDescription")}
+                        icon={<Phone className="h-4 w-4" />}
+                        values={form.watch("phone")}
+                        onAdd={(items) => {
+                          const current = form.getValues("phone");
+                          form.setValue("phone", [...current, ...items]);
+                        }}
+                        onRemove={(index) => {
+                          const current = form.getValues("phone");
+                          form.setValue("phone", current.filter((_, i) => i !== index));
+                        }}
+                        regex={phoneRegex}
+                        invalidMessage={t("validation.invalidPhone")}
+                      />
 
-                    <TagInput
-                      label={t("accounts.email")}
-                      placeholder={t("accounts.emailPlaceholder")}
-                      description={t("accounts.emailDescription")}
-                      icon={<Mail className="h-4 w-4" />}
-                      values={form.watch("email")}
-                      onAdd={(items) => {
-                        const current = form.getValues("email");
-                        form.setValue("email", [...current, ...items]);
-                      }}
-                      onRemove={(index) => {
-                        const current = form.getValues("email");
-                        form.setValue("email", current.filter((_, i) => i !== index));
-                      }}
-                      regex={emailRegex}
-                      invalidMessage={t("validation.invalidEmail")}
-                    />
+                      <TagInput
+                        label={t("accounts.email")}
+                        placeholder={t("accounts.emailPlaceholder")}
+                        description={t("accounts.emailDescription")}
+                        icon={<Mail className="h-4 w-4" />}
+                        values={form.watch("email")}
+                        onAdd={(items) => {
+                          const current = form.getValues("email");
+                          form.setValue("email", [...current, ...items]);
+                        }}
+                        onRemove={(index) => {
+                          const current = form.getValues("email");
+                          form.setValue("email", current.filter((_, i) => i !== index));
+                        }}
+                        regex={emailRegex}
+                        invalidMessage={t("validation.invalidEmail")}
+                      />
+                    </div>
                   </form>
                 </Form>
               </TabsContent>

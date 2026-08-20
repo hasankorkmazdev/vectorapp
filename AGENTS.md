@@ -68,8 +68,8 @@ Services/
 1. **Backend'de `record` keyword'ü kullanma.**
 2. **FluentValidation, model sınıfıyla aynı dosyada olmalı.**
    **Her model kendi dosyasında olmalı** — birden fazla model aynı dosyada bulunamaz. Model ve validatörü aynı dosyada kalır ancak başka bir model bu dosyaya eklenmez.
-3. **Tüm API mesajları İngilizce olmalı.** Mümkün olduğunda FluentValidation'ın varsayılan mesajları kullanılmalı.
-4. **Frontend'de magic string kullanma** — her zaman i18n locale dosyalarını (`src/i18n/locales/{en,tr}/`) kullan.
+3. **Backend mesajları UI diline uygun olmalı.** Frontend zaten `Accept-Language` header'ını `i18n.language` ile gönderiyor (`api/axios.ts`); backend buna göre Türkçe veya İngilizce mesaj döndürmeli — UI ve backend dil uyumu korunmalı. Mümkün olduğunda FluentValidation'ın varsayılan mesajları kullanılmalı.
+4. **Frontend'de magic string kullanma** — her zaman i18n locale dosyalarını (`src/i18n/locales/tr/`) kullan.
 5. **shadcn/ui componentlerini** (`src/components/ui/`) orijinal halleriyle kullan — hiçbir zaman doğrudan `<input>`, `<button>` vb. kullanma. `src/components/ui/` altındaki componentler olduğu gibi kullanılmalı; component prop olarak desteklemiyorsa ekstra stil, wrapper `div` veya `className` override eklenmemeli. Bu, tüm sayfalarda görsel tutarlılığı sağlar.
 6. **Her input için** aşağıda kırmızı renkte validation hatası (`FormMessage`) ve bir açıklama (`FormDescription`) bulunmalı.
 7. **Componentler küçük ve mantıksal parçalardan oluşmalı** — monolitik componentlerden kaçın.
@@ -77,7 +77,7 @@ Services/
 9. **Küçük mantıksal parçalara ayır** — tek bir fonksiyon/component birden fazla iş yapmamalı. Backend'de servisleri, frontend'de componentleri mantıksal sınırlarına göre böl.
 10. **Tekrar eden yapıları componentleştir** — bir UI kalıbı 2 veya daha fazla yerde kullanılıyorsa ortak bir component olarak ayır.
 11. **Maksimum 300 satır** — component veya sayfa dosyaları 300 satırı geçmemeli. Geçiyorsa mantıksal alt parçalara böl.
-12. **Sadece Türkçe localization** — yeni eklenen metinler yalnızca `tr/common.json` ve varsa `tr/` altındaki locale dosyalarına eklenir. `en/` dosyalarına ekleme yapılmaz.
+12. **Sadece Türkçe localization** — yeni locale kaydı oluşturulurken **yalnızca Türkçe** eklenir: `tr/common.json` ve varsa `tr/` altındaki locale dosyalarına. Şimdilik `en/` dosyalarına metin girilmez.
 13. **Ternary `:` kullanımı** — JSX içinde ternary (`condition ? <A> : <B>`) kullanıldığında, `:` öncesindeki ve sonrasındaki içerikler ayrı fonksiyonlara çıkarılmalıdır (`renderLoading()`, `renderEmpty()`, `renderContent()` gibi). Ternary yalnızca hangi fonksiyonun çağrılacağını seçmek için kullanılmalı; JSX doğrudan ternary içinde yazılmamalıdır.
 
 ### Null kullanımı

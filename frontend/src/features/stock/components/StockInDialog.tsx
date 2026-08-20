@@ -20,6 +20,7 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
+import { FieldDescription } from "@/components/field-description";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -126,7 +127,7 @@ export function StockInDialog({ productId, open, onOpenChange, onSuccess }: Prop
                 value={quantityStr}
                 onChange={(e) => setQuantityStr(e.target.value)}
               />
-              <p className="text-[0.8rem] text-muted-foreground">{t("stock.quantityDescription")}</p>
+              <FieldDescription>{t("stock.quantityDescription")}</FieldDescription>
             </div>
             <div className="grid grid-cols-4 gap-4">
               <div className="col-span-3">

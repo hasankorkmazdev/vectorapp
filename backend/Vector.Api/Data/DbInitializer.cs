@@ -34,6 +34,7 @@ namespace Vector.Api.Data
         {
             var permissions = new PermissionEntity[]
             {
+                new() { Id = SeedConstants.SuperAdminPermissionId, Name = "super.admin" },
             };
 
             if (permissions.Length > 0)
@@ -47,9 +48,10 @@ namespace Vector.Api.Data
         {
             var roles = new RoleEntity[]
             {
-                new() { Id = SeedConstants.OwnerRoleId, Name = "Owner" },
                 new() { Id = SeedConstants.AdminRoleId, Name = "Admin" },
-                new() { Id = SeedConstants.MemberRoleId, Name = "Member" },
+                new() { Id = SeedConstants.OrganizationAdminRoleId, Name = "OrganizationAdmin" },
+                new() { Id = SeedConstants.FinanceRoleId, Name = "Finance" },
+                new() { Id = SeedConstants.MechanicRoleId, Name = "Mechanic" },
             };
 
             context.AddOrUpdate(roles);
@@ -58,6 +60,13 @@ namespace Vector.Api.Data
 
         private static void SeedRolePermissions(ApplicationDbContext context)
         {
+            var rolePermissions = new RolePermissionEntity[]
+            {
+                new() { RoleId = SeedConstants.OrganizationAdminRoleId, PermissionId = SeedConstants.SuperAdminPermissionId },
+            };
+
+            context.AddOrUpdate(rolePermissions);
+            context.SaveChanges();
         }
 
         private static void SeedUsers(ApplicationDbContext context)
@@ -143,7 +152,7 @@ namespace Vector.Api.Data
                     Id = Guid.Parse("C0B67CA1-94A7-4F31-8801-90BDC3BE7FE0"),
                     OrganizationId = SeedConstants.OrganizationKBB,
                     UserId = SeedConstants.OrganizationAdminUserId,
-                    RoleId = SeedConstants.OwnerRoleId,
+                    RoleId = SeedConstants.OrganizationAdminRoleId,
                     CreatedAt = DateTime.UtcNow
                 },
                 new()
@@ -151,7 +160,7 @@ namespace Vector.Api.Data
                     Id = Guid.Parse("84BF7E9B-A85E-475A-9E0F-1DBE008CEF5D"),
                     OrganizationId = SeedConstants.OrganizationKBB,
                     UserId = SeedConstants.hasankorkmazdevId,
-                    RoleId = SeedConstants.OwnerRoleId,
+                    RoleId = SeedConstants.OrganizationAdminRoleId,
                     CreatedAt = DateTime.UtcNow
                 },
             };
@@ -338,6 +347,17 @@ namespace Vector.Api.Data
                     Name = "Atölye Deposu",
                     Location = "Konya",
                     IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new()
+                {
+                    Id = SeedConstants.GeneralWorkshopWarehouseId,
+                    OrganizationId = SeedConstants.OrganizationKBB,
+                    Code = "WH003",
+                    Name = "Atölye Genel Deposu",
+                    Location = "Konya",
+                    IsActive = true,
+                    IsDefault = true,
                     CreatedAt = DateTime.UtcNow
                 }
             };

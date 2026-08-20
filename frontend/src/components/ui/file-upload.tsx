@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FieldDescription } from "@/components/field-description";
 
 interface FileUploadProps {
     value?: string;
@@ -290,7 +291,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             )}
             
             {description && (
-                <p className="text-[10px] text-muted-foreground mt-1">{description}</p>
+                <FieldDescription>{description}</FieldDescription>
             )}
         </div>
     );

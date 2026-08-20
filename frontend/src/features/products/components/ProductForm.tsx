@@ -292,26 +292,6 @@ export function ProductForm({ initialValues, loading, onSubmit }: ProductFormPro
 
           <FormField
             control={form.control}
-            name="imageUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("products.image")}</FormLabel>
-                <FormControl>
-                  <FileUpload
-                    value={field.value}
-                    onChange={field.onChange}
-                    getImageUrl={(url) => url || ""}
-                    label={t("products.image")}
-                    description={t("products.imageDescription")}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="description"
             render={({ field }) => (
               <FormItem>
@@ -416,6 +396,25 @@ export function ProductForm({ initialValues, loading, onSubmit }: ProductFormPro
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name="imageUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("products.image")}</FormLabel>
+                <FormControl>
+                  <FileUpload
+                    value={field.value}
+                    onChange={field.onChange}
+                    getImageUrl={(url) => url || ""}
+                    description={t("products.imageDescription")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <div className="flex justify-end gap-2">
             <Button type="submit" disabled={loading}>

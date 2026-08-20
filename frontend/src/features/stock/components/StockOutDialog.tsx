@@ -20,6 +20,7 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
+import { FieldDescription } from "@/components/field-description";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -118,7 +119,7 @@ export function StockOutDialog({ productId, unit, open, onOpenChange, onSuccess 
                 />
                 <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{unit}</span>
               </div>
-              <p className="text-[0.8rem] text-muted-foreground">{t("stock.quantityDescription")}</p>
+              <FieldDescription>{t("stock.quantityDescription")}</FieldDescription>
             </div>
             <FormField
               control={form.control}

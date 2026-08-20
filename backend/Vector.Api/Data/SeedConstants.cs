@@ -5,9 +5,13 @@ namespace Vector.Api.Data
     public static class SeedConstants
     {
         // Role IDs
-        public static readonly Guid OwnerRoleId = Guid.Parse("00000000-0000-0000-0000-000000000010");
         public static readonly Guid AdminRoleId = Guid.Parse("00000000-0000-0000-0000-000000000011");
-        public static readonly Guid MemberRoleId = Guid.Parse("00000000-0000-0000-0000-000000000012");
+        public static readonly Guid OrganizationAdminRoleId = Guid.Parse("00000000-0000-0000-0000-000000000013");
+        public static readonly Guid FinanceRoleId = Guid.Parse("00000000-0000-0000-0000-000000000014");
+        public static readonly Guid MechanicRoleId = Guid.Parse("00000000-0000-0000-0000-000000000015");
+
+        // Permission IDs
+        public static readonly Guid SuperAdminPermissionId = Guid.Parse("00000000-0000-0000-0000-000000000090");
 
         // User IDs
         public static readonly Guid AdminUserId = Guid.Parse("00000000-0000-0000-0000-000000000020");
@@ -22,6 +26,7 @@ namespace Vector.Api.Data
         // Warehouse IDs
         public static readonly Guid DefaultWarehouseId = Guid.Parse("00000000-0000-0000-0000-000000000040");
         public static readonly Guid WorkshopWarehouseId = Guid.Parse("00000000-0000-0000-0000-000000000041");
+        public static readonly Guid GeneralWorkshopWarehouseId = Guid.Parse("00000000-0000-0000-0000-000000000042");
 
         // Product Group IDs
         public static readonly Guid ProductGroupOilId = Guid.Parse("00000000-0000-0000-0000-000000000050");
